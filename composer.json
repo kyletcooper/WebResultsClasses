@@ -8,5 +8,6 @@
             "email": "kyle@webresultsdirect.com"
         }
     ],
-    "require": {}
+    "require": {},
+    "license": "MIT"
 }
