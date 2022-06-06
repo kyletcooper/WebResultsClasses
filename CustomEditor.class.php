@@ -131,6 +131,7 @@ class CustomEditor
             </h1>
 
             <div class="editor_controls">
+                <a class="editor_exit" href="<?php echo $this->post->get_permalink() ?>"><?php _e("Close", "wrd") ?></a>
                 <button class="editor_submit" type="submit"><?php _e("Save", "wrd") ?></button>
             </div>
         </header>
