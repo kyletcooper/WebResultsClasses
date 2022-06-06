@@ -1,5 +1,7 @@
 <?php
 
+namespace wrd;
+
 if (!function_exists("wrd_autoload")) {
 
     function wrd_autoload(array $whitelist = [])
