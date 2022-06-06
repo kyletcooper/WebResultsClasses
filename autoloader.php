@@ -2,11 +2,9 @@
 
 namespace wrd;
 
-var_dump("Test!");
+if (!function_exists(__NAMESPACE__ . "\autoload")) {
 
-if (!function_exists(__NAMESPACE__ . "\wrd_autoload")) {
-
-    function wrd_autoload(array $whitelist = [])
+    function autoload(array $whitelist = [])
     {
         $classes = [
             "WRD",
