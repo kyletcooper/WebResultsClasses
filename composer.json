@@ -1,7 +1,7 @@
 {
     "name": "webresults/classes",
     "type": "library",
-    "version": "dev-main",
+    "version": "dev-master",
     "authors": [
         {
             "name": "kyle",
