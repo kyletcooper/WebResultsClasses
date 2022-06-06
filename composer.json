@@ -1,7 +1,7 @@
 {
     "name": "webresults/classes",
     "type": "library",
-    "version": "1.0.7",
+    "version": "1.0.8",
     "authors": [
         {
             "name": "kyle",
@@ -9,9 +9,7 @@
         }
     ],
     "autoload": {
-        "psr-4": {
-            "WRD\\": "/autoloader.php"
-        }
+        "files": ["autoloader.php"]
     },
     "require": {},
     "license": "MIT"
