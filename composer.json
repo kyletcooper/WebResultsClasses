@@ -8,11 +8,11 @@
             "email": "kyle@webresultsdirect.com"
         }
     ],
-    "require": {},
-    "license": "MIT",
     "autoload": {
         "psr-4": {
             "WRD\\": "/autoloader.php"
         }
-    }
+    },
+    "require": {},
+    "license": "MIT"
 }
