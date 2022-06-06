@@ -1,0 +1,106 @@
+.wrd-setting-font {
+	padding: 0 !important;
+}
+.wrd-setting-font__results {
+	padding: calc(var(--wrd-setting-padding) - 0.5rem);
+}
+.wrd-setting-font__choice {
+	display: inline-block;
+	position: relative;
+
+	margin: 0.5rem;
+}
+.wrd-setting-font__input {
+	width: 0;
+	height: 0;
+	opacity: 0;
+	position: absolute;
+}
+.wrd-setting-font__label {
+	display: inline-block;
+	padding: 1rem;
+
+	border: 1px solid var(--wrd-clr-gray-300);
+	border-radius: 0.2rem;
+
+	color: var(--wrd-clr-gray-700);
+
+	transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+.wrd-setting-font__label:hover {
+	border-color: var(--wrd-clr-primary-500);
+	color: var(--wrd-clr-primary-700);
+}
+.wrd-setting-font__label:hover h4 {
+	color: var(--wrd-clr-primary-500);
+}
+.wrd-setting-font__input:checked ~ .wrd-setting-font__label {
+	background: var(--wrd-clr-primary-500);
+	color: var(--wrd-clr-primary-700);
+}
+.wrd-setting-font__input:checked ~ .wrd-setting-font__label h4 {
+	color: var(--wrd-clr-gray-100);
+}
+.wrd-setting-font__label h4 {
+	font-size: 1.3rem;
+	color: var(--wrd-clr-gray-900);
+
+	transition: color 0.2s ease;
+
+	margin: 0;
+	margin-bottom: 0.5rem;
+}
+
+.wrd-setting-font__header {
+	padding: var(--wrd-setting-padding);
+	padding-top: 0;
+
+	position: sticky;
+	top: 0;
+	z-index: 1;
+
+	background: var(--wrd-clr-gray-000);
+
+	border-bottom: 1px solid var(--wrd-clr-gray-500);
+
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+}
+.wrd-setting-font__pagination {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1rem;
+
+	margin-top: var(--wrd-setting-padding);
+}
+.wrd-setting-font__search[type="text"] {
+	border: 1px solid var(--wrd-clr-gray-300);
+
+	padding: 0.5rem 1rem;
+	margin-top: var(--wrd-setting-padding);
+	margin-right: 3rem;
+
+	flex-grow: 1;
+	max-width: 45ch;
+}
+.wrd-setting-font .wrd-setting__title {
+	padding: var(--wrd-setting-padding);
+	margin-bottom: 0px;
+}
+.wrd-setting-font .wrd-setting__title h3,
+.wrd-setting-font__preview {
+	transition: color 0.2s ease;
+}
+.wrd-setting-font.wrd-setting-open .wrd-setting__title h3,
+.wrd-setting-open .wrd-setting-font__preview h4 {
+	color: var(--wrd-clr-primary-500);
+}
+.wrd-setting-font__preview h4 {
+	margin: 0px;
+	font-size: 2rem;
+	color: var(--wrd-clr-gray-900);
+	line-height: 1.5;
+}

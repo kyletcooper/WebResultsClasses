@@ -1,0 +1,37 @@
+.wrd-setting-font-weight__options{
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.wrd-setting-font-weight__option{
+    position: relative;
+}
+.wrd-setting-font-weight__option span{
+    width: 2rem;
+    height: 2rem;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid var(--wrd-clr-gray-300);
+    border-radius: 999px;
+
+    transition: all 0.2s ease;
+}
+.wrd-setting-font-weight__option input{
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.wrd-setting-font-weight__option input:checked ~ span{
+    background: var(--wrd-clr-primary-500);
+    border-color: var(--wrd-clr-primary-300);
+    color: var(--wrd-clr-gray-100);'
+}

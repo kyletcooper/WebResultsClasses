@@ -1,0 +1,39 @@
+.wrd-setting-checkbox__wrapper {
+    position: relative;
+    display: block;
+}
+.wrd-setting-checkbox__input {
+    width: 1px !important;
+    height: 1px !important;
+    position: absolute;
+    opacity: 0;
+}
+.wrd-setting-checkbox__visual {
+    width: 1.5rem;
+    height: 1.5rem;
+
+    border: 0.15rem solid var(--wrd-clr-gray-500);
+    border-radius: 0.3rem;
+
+    transition: all 0.2s ease;
+
+    position: relative;
+}
+.wrd-setting-checkbox__visual:before{
+    content: '\2713';
+    display: block;
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    color: var(--wrd-clr-gray-000);
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.wrd-setting-checkbox__input:checked ~ .wrd-setting-checkbox__visual{
+    background: var(--wrd-clr-primary-500);
+    border-color: var(--wrd-clr-primary-500);
+}

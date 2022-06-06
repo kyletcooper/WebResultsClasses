@@ -1,0 +1,1 @@
+<input id="<?php echo esc_attr($this->id) ?>" type="text" name="<?php echo esc_attr($this->key) ?>" value="<?php echo esc_attr($this->get_value($post_id)) ?>">

@@ -1,0 +1,24 @@
+.wrd-color-shades {
+}
+.wrd-color-shades__shade {
+	display: flex;
+	align-items: center;
+}
+
+.wrd-color-shades__shade__label {
+	text-transform: capitalize;
+
+	display: block;
+	margin-inline-start: 1rem;
+}
+
+.wrd-color-shades__shade__input {
+	border: none !important;
+	appearance: none;
+	padding: 0px;
+	margin: 0px;
+	background: transparent !important;
+	width: 3rem;
+	height: 3rem;
+	cursor: pointer;
+}

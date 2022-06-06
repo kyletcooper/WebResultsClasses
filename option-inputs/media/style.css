@@ -1,0 +1,77 @@
+.wrd-setting-media__wrapper{
+    position: relative;
+}
+
+.wrd-setting-media__button{
+    display: flex;
+    align-items: center;
+    flex-direction: row-reverse;
+
+    border: none;
+    background: transparent;
+
+    font-family: inherit;
+    font-size: 1rem;
+    color: var(--wrd-clr-primary-500);
+    font-weight: 500;
+
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+.wrd-setting-media__button:hover{
+    opacity: 0.7;
+}
+
+.wrd-setting-media__button img{
+    width: 4rem;
+    height: 4rem;
+    margin-left: 1rem;
+    object-fit: cover;
+    object-position: center;
+    background: var(--wrd-clr-gray-300);
+    border-radius: 9999px;
+}
+
+.wrd-setting-media__button span{
+    max-width: 25ch;
+    text-align: right;
+    
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.wrd-setting-media__remove{
+    display: none;
+}
+
+.has-media ~ .wrd-setting-media__remove{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    position: absolute;
+    top: 0;
+    right: 0;
+
+    width: 1.5rem;
+    height: 1.5rem;
+
+    border-radius: 9999px;
+    border: none;
+
+    background: #f22727;
+    color: white;
+
+    font-size: 1rem;
+    font-weight: 500;
+    font-family: inherit;
+    line-height: 1;
+
+    cursor: pointer;
+}
+.has-media ~ .wrd-setting-media__remove:hover,
+.has-media ~ .wrd-setting-media__remove:focus{
+    background: #860505;
+}

@@ -1,0 +1,16 @@
+.wrd-setting-button__btn{
+    border: 0px;
+    border-radius: 0.2rem;
+
+    background: var(--wrd-clr-primary-500);
+
+    color: white;
+    font-weight: 500;
+
+    padding: 0.7rem 1.4rem;
+
+    cursor: pointer;
+}
+.wrd-setting-button__btn:hover{
+    background: var(--wrd-clr-primary-300);
+}

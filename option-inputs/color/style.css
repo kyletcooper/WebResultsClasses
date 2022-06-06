@@ -1,0 +1,17 @@
+.wrd-setting-color__wrapper{
+	border-radius: 999px;
+	overflow: hidden;
+
+	width: 3rem;
+	height: 3rem;
+
+	cursor: pointer;
+}
+.wrd-setting-color__input{
+	width: 100% !important;
+	height: 100% !important;
+	transform: scale(1.3);
+	padding: 0 !important;
+	margin: 0 !important;
+	border: none !important;
+}
