@@ -1,0 +1,11 @@
+{
+    "name": "webresults/classes",
+    "type": "library",
+    "authors": [
+        {
+            "name": "kyle",
+            "email": "kyle@webresultsdirect.com"
+        }
+    ],
+    "require": {}
+}
