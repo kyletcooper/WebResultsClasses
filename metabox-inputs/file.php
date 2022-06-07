@@ -73,6 +73,25 @@
     }
 </style>
 
+<script>
+    jQuery(function ($) {
+        $('body').on('click', '.upload_image_button', function (e) {
+            e.preventDefault();
+            aw_uploader = wp.media({
+                title: 'Custom image',
+                button: {
+                    text: 'Use this image'
+                },
+                multiple: false
+            }).on('select', function () {
+                var attachment = aw_uploader.state().get('selection').first().toJSON();
+                $('#cat-image').val(attachment.id);
+            })
+                .open();
+        });
+    });
+</script>
+
 <?php
 wp_enqueue_media();
 wp_enqueue_script("media-script", get_template_directory_uri() . '/admin/options/inputs/media/script.js', ["jquery", "wp-api"], '1.0');
