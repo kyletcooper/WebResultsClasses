@@ -1,5 +1,6 @@
 class Query {
     constructor(selector) {
+        this.selector = selector;
         this.elements = document.querySelectorAll(this.selector);
     }
 

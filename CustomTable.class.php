@@ -43,7 +43,7 @@ class CustomTable
     function get_table_name()
     {
         global $wpdb;
-        $table_name = $wpdb->prefix . $this->table_name;
+        $table_name = $wpdb->prefix . $this->name;
 
         return $table_name;
     }

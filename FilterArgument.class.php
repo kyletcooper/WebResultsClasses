@@ -22,7 +22,7 @@ class FilterArgument
                 } else if ($filter->type == "tax") {
                     $taxes[] = $filter->get_query_args();
                 } else {
-                    $args['field'] = $filter->get_value();
+                    $args[$filter->field] = $filter->get_value();
                 }
             }
         }
@@ -113,4 +113,73 @@ class FilterArgument
 
         return $args;
     }
+
+    static function ajax_filter_posts(){
+        $page = @$_REQUEST["page"] ?: 1;
+
+        $args = FilterArgument::combine([
+            'paged' => $page,
+            'post_type' => WRD_LISTING_POSTTYPE
+        ], ...Listing::get_filters());
+
+        $query = new \WP_Query($args);
+
+        ob_start();
+
+        var_dump($args);
+        var_dump($_REQUEST);
+
+        foreach ($query->posts as $post) {
+            $post = CustomPost::get_post_unknown($post);
+            $post->render_preview();
+        }
+
+        $html = ob_get_clean();
+
+        WRD::ajax_success([
+            "listings_html" => $html,
+
+            "max_pages" => $query->max_num_pages,
+            "page" => min($query->max_num_pages, $page)
+        ]);
+    }
+
+    static function js_archive_query(){
+        global $wp_query;
+
+        $obj = [
+            "post_type" => get_post_type(),
+            "page" => get_query_var("paged", 1),
+            "max_num_pages" => $wp_query->max_num_pages,
+            "found_posts" => $wp_query->found_posts,
+        ];
+
+        if (is_archive()) { 
+            $queried = get_queried_object();
+
+            if (is_a($queried, 'WP_User')){
+                $obj["query_type"] = "user";
+                $obj["author_id"] = $queried->ID;
+            }
+            elseif (is_a($queried, 'WP_Term')){
+                $obj["query_type"] = "taxonomy";
+                $obj["term_id"] = $queried->term_id;
+            }
+            elseif (is_a($queried, 'WP_Post_Type')){
+                $obj["query_type"] = "post_type";
+                $obj["post_type"] = $queried->name;
+            }
+        }
+
+        ?>
+        <script>
+            window.archiveFilters = `<?php echo json_encode($obj) ?>`;
+        </script>
+        <?
+    }
 }
+
+add_action("wp_ajax_filter_posts", ["wrd\FilterArgument", "ajax_filter_posts"]);
+add_action("wp_ajax_nopriv_filter_posts", ["wrd\FilterArgument", "ajax_filter_posts"]);
+
+add_action('wp_head', ["wrd\FilterArgument", "js_archive_query"]);
