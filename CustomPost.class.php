@@ -503,15 +503,19 @@ class CustomPost
     }
 
     /**
-     * I do not like this.
+     * 
      */
     function render_preview(string $style = '', $small = false)
     {
+        static::render_post_preview($style, $small, $this->post);
+    }
+
+    static function render_post_preview(string $style = '', $small = false, $post_preview = null){
         $posttype = static::post_type;
         $style = static::part;
 
         global $post;
-        $post = $this->post;
+        $post = get_post($post_preview);
         setup_postdata($post);
 
         $locations = [
