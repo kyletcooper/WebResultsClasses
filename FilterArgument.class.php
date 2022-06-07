@@ -175,7 +175,7 @@ class FilterArgument
         <script>
             window.archiveFilters = `<?php echo json_encode($obj) ?>`;
         </script>
-        <?
+        <?php
     }
 }
 
