@@ -215,4 +215,16 @@ class OptionPage
 
         return $subpages;
     }
+
+    static function exists($slug){
+        global $WRD_SETTINGS_PAGES;
+
+        foreach($WRD_SETTINGS_PAGES as $page){
+            if($page->slug == $slug){
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
