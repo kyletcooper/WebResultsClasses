@@ -62,6 +62,12 @@ class CustomPost
         $this->fields = static::get_fields();
     }
 
+    static function get_fields()
+    {
+        $class = get_called_class();
+        return apply_filters("custompost_{$class}_fields", []);
+    }
+
 
     /**
      * Finds the WP Post by either ID, slug, WP_Post or Global Post.
@@ -487,7 +493,8 @@ class CustomPost
         return static::render_post_preview($style, $small, $this->post);
     }
 
-    static function render_post_preview(string $style = '', $small = false, $post_preview = null){
+    static function render_post_preview(string $style = '', $small = false, $post_preview = null)
+    {
         $posttype = static::post_type;
 
         global $post;
@@ -594,7 +601,7 @@ class CustomPost
 
     static function hook_post_type_link($link, $post)
     {
-        if(get_post_type($post) == static::post_type){
+        if (get_post_type($post) == static::post_type) {
             $class = get_called_class();
             $post_obj = static::get_post($post);
 
