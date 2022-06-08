@@ -1,4 +1,4 @@
-class FilterArchives{
+class FilteringSystem{
     constructor(formSelector, outputSelector){
         this.form = document.querySelector(formSelector);
         this.output = document.querySelector(outputSelector);
