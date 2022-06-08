@@ -26,7 +26,7 @@ class CustomPost
 
     /*  Class Settings  */
 
-    const post_type = null;                 // String. Name of the post type in the database.
+    const post_type = "post";               // String. Name of the post type in the database.
     const supports = [                      // Array[String]. Post type supports.
         'title',
         'revisions',
@@ -38,7 +38,6 @@ class CustomPost
     const icon = "dashicons-star-filled";   // String. Dashicons string for the post type icon.
     const label = "Label";                  // String. Singular name of the post type.
     const label_plural = "Labels";          // String. Plural name of the post type.
-    const part = "";                        // String. Style suffix to use for the part.
 
     const slug = null;                      // String. Prefix before the slug in the URLs.
     const slug_edit_suffix = "edit";        // String. Suffix for the end of URLs to open editor.
@@ -512,7 +511,6 @@ class CustomPost
 
     static function render_post_preview(string $style = '', $small = false, $post_preview = null){
         $posttype = static::post_type;
-        $style = static::part;
 
         global $post;
         $post = get_post($post_preview);
