@@ -143,7 +143,7 @@ class Filter
     function render()
     {
 ?>
-        <label <?php $this->filter_classes() ?>>
+        <label class="<?php echo $this->filter_classes() ?>">
             <span>
                 <?php echo esc_html($this->label) ?>
             </span>
@@ -167,6 +167,6 @@ class Filter
 
         $classes = implode(" ", $classes);
 
-        echo "class='$classes' ";
+        return $classes;
     }
 }
