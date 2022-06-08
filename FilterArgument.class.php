@@ -169,16 +169,14 @@ class FilterArgument
         global $wp_query;
 
         $obj = [
-            "post_type" => get_post_type(),
+            "post_types" => WRD::get_archive_post_types(),
             "page" => get_query_var("paged", 1),
             "max_num_pages" => $wp_query->max_num_pages,
             "found_posts" => $wp_query->found_posts,
-        ];
 
-        if (is_archive()) {
-            $obj['query_class'] = get_class(get_queried_object());
-            $obj['query_id'] = get_queried_object_id();
-        }
+            "ajax_url" => admin_url('admin-ajax.php'),
+            "ajax_action" => "filter_posts",
+        ];
 
         wp_enqueue_script("filterArgument-js", WRD::dir_to_url() . '/filter-inputs/FilteringSystem.js');
         wp_localize_script("filterArgument-js", "FILTERS", $obj);

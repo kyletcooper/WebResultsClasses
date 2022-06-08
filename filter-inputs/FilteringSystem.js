@@ -8,7 +8,7 @@ class FilteringSystem{
         };
 
         // If we have an input for taxonomies or something that forms an archive, select it
-        this.set_active_filters(window.archiveFilters);
+        this.set_active_filters(window.FILTERS);
         this._addEventListeners();
     }
 
@@ -70,8 +70,8 @@ class FilteringSystem{
         return active;
     }
 
-    get_args(){
-        let args = window.archiveFilters;
+    get_form_args(){
+        let args = {};
         let formData = new FormData(this.form);
 
         for (var pair of formData.entries()) {
@@ -86,8 +86,15 @@ class FilteringSystem{
         return args;
     }
 
+    get_args(){
+        return {
+            ...window.FILTERS,
+            ...this.get_form_args()
+        };
+    }
+
     refresh_url_query(push = false) {
-        let queryParams = new URLSearchParams(this.get_args());
+        let queryParams = new URLSearchParams(this.get_form_args());
     
         if (push) {
             window.history.pushState({}, '', "?" + queryParams.toString());
@@ -101,9 +108,9 @@ class FilteringSystem{
         this.output.dataset.loading = true;
 
         let data = this.get_args();
-        data.action = "filter_posts";
+        data.action = window.FILTERS.ajax_action;
 
-        return fetch(AJAX.ajax_url, {
+        return fetch(window.FILTERS.ajax_url, {
             method: 'POST',
             credentials: 'same-origin',
             headers: new Headers({ 'Content-Type': 'application/x-www-form-urlencoded' }),
@@ -119,14 +126,14 @@ class FilteringSystem{
     }
 
     change_page(amount){
-        window.archiveFilters.page += amount;
+        window.FILTERS.page += amount;
 
-        if(window.archiveFilters.page < 1){
-            window.archiveFilters.page = 1;
+        if(window.FILTERS.page < 1){
+            window.FILTERS.page = 1;
         }
 
-        if(window.archiveFilters.page > window.archiveFilters.max_num_pages){
-            window.archiveFilters.page = window.archiveFilters.max_num_pages;
+        if(window.FILTERS.page > window.FILTERS.max_num_pages){
+            window.FILTERS.page = window.FILTERS.max_num_pages;
         }
 
         update();
