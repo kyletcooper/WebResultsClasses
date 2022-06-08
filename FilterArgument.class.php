@@ -164,39 +164,6 @@ class FilterArgument
         return $args;
     }
 
-    static function ajax_filter_posts()
-    {
-        $page = @$_REQUEST["page"] ?: 1;
-
-        $archive_filters = static::get_instances_for_archive($_REQUEST['query_class'], $_REQUEST['query_id']);
-
-        $args = FilterArgument::combine([
-            'paged' => $page,
-            'post_type' => WRD_LISTING_POSTTYPE
-        ], ...$archive_filters);
-
-        $query = new \WP_Query($args);
-
-        ob_start();
-
-        var_dump($args);
-        var_dump($_REQUEST);
-
-        foreach ($query->posts as $post) {
-            $post = CustomPost::get_post_unknown($post);
-            $post->render_preview();
-        }
-
-        $html = ob_get_clean();
-
-        WRD::ajax_success([
-            "listings_html" => $html,
-
-            "max_pages" => $query->max_num_pages,
-            "page" => min($query->max_num_pages, $page)
-        ]);
-    }
-
     static function enqueue()
     {
         global $wp_query;
@@ -244,7 +211,5 @@ class FilterArgument
 
 add_action("wp_ajax_filter_posts", ["wrd\FilterArgument", "ajax_filter_posts"]);
 add_action("wp_ajax_nopriv_filter_posts", ["wrd\FilterArgument", "ajax_filter_posts"]);
-
-add_action('wp_head', ["wrd\FilterArgument", "js_archive_query"]);
 
 add_action('wp_enqueue_scripts', ["wrd\FilterArgument", "enqueue"]);
