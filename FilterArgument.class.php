@@ -11,10 +11,11 @@ class FilterArgument
         $this->title    = WRD::array_fallback($opts, "title", __("Filters", 'wrd'));
         $this->slug     = WRD::array_fallback($opts, "slug", sanitize_title($this->title));
         $this->filters  = WRD::array_fallback($opts, "filters", []);
-
-        // If an archive matches all of these criteria, the filter will be shown.
-        // Can be array or string.
         $this->posttype = WRD::array_fallback($opts, "posttype", ["post"]);
+
+        if (!is_array($this->posttype)) {
+            $this->posttype = [$this->posttype];
+        }
 
         static::$instances[] = $this;
     }
@@ -169,8 +170,8 @@ class FilterArgument
         global $wp_query;
 
         $obj = [
-            "post_types" => WRD::get_archive_post_types(),
-            "page" => get_query_var("paged", 1),
+            "post_type" => WRD::get_archive_post_types(),
+            "paged" => get_query_var("paged", 1),
             "max_num_pages" => $wp_query->max_num_pages,
             "found_posts" => $wp_query->found_posts,
 
@@ -182,18 +183,17 @@ class FilterArgument
         wp_localize_script("filterArgument-js", "FILTERS", $obj);
     }
 
-    static function get_instances_for_archive($archive_type = null, $archive_target = null)
+    static function get_instances_for_archive($archive_posttypes = null)
     {
         $applicable = [];
-        $archive_posttypes = WRD::get_archive_post_types();
+        $archive_posttypes = $archive_posttypes ?: WRD::get_archive_post_types();
+
+        if (!is_array($archive_posttypes)) {
+            $archive_posttypes = [$archive_posttypes];
+        }
 
         foreach (static::get_instances() as $filterArgument) {
-            // If posttype is an array, see if any of its posttypes is in this archive.
-            if (is_array($filterArgument->posttype) && array_intersect($filterArgument->posttype, $archive_posttypes)) {
-                $applicable[] = $filterArgument;
-            }
-            // If post type is a string, see if its in this archive.
-            else if (in_array($filterArgument->posttype, $archive_posttypes)) {
+            if (array_intersect($filterArgument->posttype, $archive_posttypes)) {
                 $applicable[] = $filterArgument;
             }
         }
@@ -208,21 +208,19 @@ class FilterArgument
 
     static function ajax_filter_posts()
     {
-        $page = @$_REQUEST["page"] ?: 1;
+        $page = $_REQUEST["page"] ?: 1;
+        $posttype = $_REQUEST["post_type"] ?: "post";
 
-        $archive_filters = FilterArgument::get_instances_for_archive($_REQUEST['query_class'], $_REQUEST['query_id']);
+        $archive_filters = FilterArgument::get_instances_for_archive($posttype);
 
         $args = FilterArgument::combine([
-            'paged' => $page,
-            'post_type' => WRD_LISTING_POSTTYPE
+            'paged'     => $page,
+            'post_type' => $posttype,
         ], ...$archive_filters);
 
         $query = new \WP_Query($args);
 
         ob_start();
-
-        var_dump($args);
-        var_dump($_REQUEST);
 
         foreach ($query->posts as $post) {
             $post = CustomPost::get_post_unknown($post);
@@ -232,10 +230,10 @@ class FilterArgument
         $html = ob_get_clean();
 
         WRD::ajax_success([
-            "listings_html" => $html,
+            "html" => $html,
 
-            "max_pages" => $query->max_num_pages,
-            "page" => min($query->max_num_pages, $page)
+            "max_num_pages" => $query->max_num_pages,
+            "paged" => min($query->max_num_pages, $page)
         ]);
     }
 }

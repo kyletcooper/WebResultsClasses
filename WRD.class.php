@@ -367,7 +367,7 @@ class WRD
      */
     static function ajax_response(bool $success, array $data = [])
     {
-        $data["status"] = $success ? "true" : "false";
+        $data["status"] = $success;
         echo json_encode($data);
         wp_die();
     }
@@ -582,27 +582,29 @@ class WRD
     /**
      * @return string[] Array of posttypes. Defaults to ["post"].
      */
-    static function get_archive_post_types(){
+    static function get_archive_post_types()
+    {
         $obj = get_queried_object();
 
-        if(is_singular()){
+        if (is_singular()) {
             return [get_post_type()];
         }
-        if(is_post_type_archive()){
+        if (is_post_type_archive()) {
             return [$obj->name];
         }
-        if(is_tax()){
+        if (is_tax()) {
             $tax = get_taxonomy($obj->taxonomy);
 
-            if($tax){
+            if ($tax) {
                 return $tax->object_type;
             }
         }
-        
+
         return ["post"];
     }
 
-    static function enqueue(){
+    static function enqueue()
+    {
         wp_enqueue_script("WRD-js", WRD::dir_to_url() . '/query.js');
     }
 }

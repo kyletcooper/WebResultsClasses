@@ -4,7 +4,7 @@ class FilteringSystem{
         this.output = document.querySelector(outputSelector);
 
         window.FILTERS = window.FILTERS || {
-            page: 1,
+            paged: 1,
         };
 
         // If we have an input for taxonomies or something that forms an archive, select it
@@ -117,11 +117,14 @@ class FilteringSystem{
             body: new URLSearchParams(data)
         })
         .then(response => response.json())
-        .then(response => response => {
+        .then(response => {
+            if(response.status){
+                this.output.dataset.loading = false;
+                this.output.innerHTML = response.html;
 
-            this.output.dataset.loading = false;
-            this.output.innerHTML = "New posts!";
-
+                window.FILTERS.paged = response.paged;
+                window.FILTERS.max_num_pages = response.max_num_pages;
+            }
         });
     }
 
