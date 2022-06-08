@@ -63,19 +63,20 @@ class FilterArgument
         return call_user_func($this->condition_callable);
     }
 
-    function render(){
-        ?>
+    function render()
+    {
+?>
 
         <div class="filter-group">
-            <span class="filter-group_title>
+            <span class="filter-group_title">
                 <?php echo esc_html($this->title) ?>
             </span>
 
             <div class="filter-group_filters">
 
                 <?php
-                
-                foreach($this->filters as $filter){
+
+                foreach ($this->filters as $filter) {
                     // Render all children
                     $filter->render();
                 }
@@ -85,7 +86,7 @@ class FilterArgument
             </div>
         </div>
 
-<?php
+    <?php
     }
 
     static function add_meta_query($args, $meta)
@@ -118,7 +119,18 @@ class FilterArgument
 
     static function create_from_tax(string $title, string $taxonomy_name)
     {
+        $args = [
+            "title" => $title,
+            "filters" => [],
+        ];
+
+
         $tax = get_taxonomy($taxonomy_name);
+        if ($tax) {
+            $args["posttype"] = $tax->object_type;
+        }
+
+
         $terms = get_terms([
             "taxonomy" => $taxonomy_name,
             "orderby" => "count",
@@ -126,10 +138,12 @@ class FilterArgument
             // "hide_empty" => false
         ]);
 
-        $filters = [];
+        if (is_wp_error($terms)) {
+            return false;
+        }
 
         foreach ($terms as $term) {
-            $filters[] = new Filter([
+            $args["filters"] = new Filter([
                 "type" => "tax",
                 "name" => $term->slug,
                 "field" => $taxonomy_name,
@@ -137,11 +151,8 @@ class FilterArgument
             ]);
         }
 
-        return new static([
-            "title" => $title,
-            "filters" => $filters,
-            "posttype" => $tax->object_type
-        ]);
+
+        return new static($args);
     }
 
     static function combine(array $args, FilterArgument ...$filter_arguments)
@@ -153,7 +164,8 @@ class FilterArgument
         return $args;
     }
 
-    static function ajax_filter_posts(){
+    static function ajax_filter_posts()
+    {
         $page = @$_REQUEST["page"] ?: 1;
 
         $archive_filters = static::get_instances_for_archive($_REQUEST['query_class'], $_REQUEST['query_id']);
@@ -185,7 +197,8 @@ class FilterArgument
         ]);
     }
 
-    static function js_archive_query(){
+    static function js_archive_query()
+    {
         global $wp_query;
 
         $obj = [
@@ -195,33 +208,35 @@ class FilterArgument
             "found_posts" => $wp_query->found_posts,
         ];
 
-        if (is_archive()) { 
+        if (is_archive()) {
             $obj['query_class'] = get_class(get_queried_object());
             $obj['query_id'] = get_queried_object_id();
         }
 
-        ?>
+    ?>
         <script>
             window.archiveFilters = `<?php echo json_encode($obj) ?>`;
         </script>
-        <?php
+<?php
     }
 
-    static function enqueue(){
-        wp_enqueue_script("filterArgument-js", WRD::dir_to_url() . '/filter-inputs/filtering.js');
+    static function enqueue()
+    {
+        wp_enqueue_script("filterArgument-js", WRD::dir_to_url() . '/filter-inputs/FilteringSystem.js');
     }
 
-    static function get_instances_for_archive($archive_type = null, $archive_target = null){
+    static function get_instances_for_archive($archive_type = null, $archive_target = null)
+    {
         $applicable = [];
         $archive_posttypes = WRD::get_archive_post_types();
 
-        foreach(static::get_instances() as $filterArgument){
+        foreach (static::get_instances() as $filterArgument) {
             // If posttype is an array, see if any of its posttypes is in this archive.
-            if(is_array($filterArgument->posttype) && array_intersect($filterArgument->posttype, $archive_posttypes)){
+            if (is_array($filterArgument->posttype) && array_intersect($filterArgument->posttype, $archive_posttypes)) {
                 $applicable[] = $filterArgument;
             }
             // If post type is a string, see if its in this archive.
-            else if(in_array($filterArgument->posttype, $archive_posttypes)){
+            else if (in_array($filterArgument->posttype, $archive_posttypes)) {
                 $applicable[] = $filterArgument;
             }
         }
@@ -229,7 +244,8 @@ class FilterArgument
         return $applicable;
     }
 
-    static function get_instances(){
+    static function get_instances()
+    {
         return static::$instances;
     }
 }
