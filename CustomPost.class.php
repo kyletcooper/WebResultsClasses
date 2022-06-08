@@ -507,7 +507,7 @@ class CustomPost
      */
     function render_preview(string $style = '', $small = false)
     {
-        static::render_post_preview($style, $small, $this->post);
+        return static::render_post_preview($style, $small, $this->post);
     }
 
     static function render_post_preview(string $style = '', $small = false, $post_preview = null){
