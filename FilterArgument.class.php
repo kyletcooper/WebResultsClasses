@@ -13,10 +13,8 @@ class FilterArgument
         $this->filters  = WRD::array_fallback($opts, "filters", []);
 
         // If an archive matches all of these criteria, the filter will be shown.
-        // Nulls are ignored.
-        $this->author   = WRD::array_fallback($opts, "author", null);
-        $this->term     = WRD::array_fallback($opts, "term", null);
-        $this->posttype = WRD::array_fallback($opts, "posttype", "post");
+        // Can be array or string.
+        $this->posttype = WRD::array_fallback($opts, "posttype", ["post"]);
 
         static::$instances[] = $this;
     }
@@ -63,44 +61,6 @@ class FilterArgument
         }
 
         return call_user_func($this->condition_callable);
-    }
-
-    function matches_archive_criteria($needle, $haystack){
-        if($this->author === null){
-            return true;
-        }
-
-        if(is_array($haystack) && in_array($needle, $haystack)){
-            return true;
-        }
-        
-        if(get_queried_object_id() == $haystack){
-            return true;
-        }
-
-        return false;
-    }
-
-    function can_show_on_archive($archive_type = null, $archive_target = null){
-        $obj = WRD::reverse_queried_object($archive_type, $archive_target);
-        $id  = WRD::reverse_queried_object_id($archive_type, $archive_target);
-
-        // Check author matches
-        if((is_author() || is_a($obj, "WP_User")) && !$this->matches_archive_criteria($id, $this->author)){
-            return false;
-        }
-
-        // Check post type matches
-        if((is_post_type_archive() || is_a($obj, "WP_Post_Type")) && !$this->matches_archive_criteria($obj->name, $this->post_type)){
-            return false;
-        }
-
-        // Check post type matches
-        if((is_tax() || is_a($obj, "WP_Term")) && !$this->matches_archive_criteria($id, $this->term)){
-            return false;
-        }
-
-        return true;
     }
 
     function render(){
@@ -158,6 +118,7 @@ class FilterArgument
 
     static function create_from_tax(string $title, string $taxonomy_name)
     {
+        $tax = get_taxonomy($taxonomy_name);
         $terms = get_terms([
             "taxonomy" => $taxonomy_name,
             "orderby" => "count",
@@ -178,7 +139,8 @@ class FilterArgument
 
         return new static([
             "title" => $title,
-            "filters" => $filters
+            "filters" => $filters,
+            "posttype" => $tax->object_type
         ]);
     }
 
@@ -194,10 +156,12 @@ class FilterArgument
     static function ajax_filter_posts(){
         $page = @$_REQUEST["page"] ?: 1;
 
+        $archive_filters = static::get_instances_for_archive($_REQUEST['query_class'], $_REQUEST['query_id']);
+
         $args = FilterArgument::combine([
             'paged' => $page,
             'post_type' => WRD_LISTING_POSTTYPE
-        ], ...static::get_instances_for_archive());
+        ], ...$archive_filters);
 
         $query = new \WP_Query($args);
 
@@ -232,7 +196,7 @@ class FilterArgument
         ];
 
         if (is_archive()) { 
-            $obj['query_class'] = get_called_class(get_queried_object());
+            $obj['query_class'] = get_class(get_queried_object());
             $obj['query_id'] = get_queried_object_id();
         }
 
@@ -249,9 +213,15 @@ class FilterArgument
 
     static function get_instances_for_archive($archive_type = null, $archive_target = null){
         $applicable = [];
+        $archive_posttypes = WRD::get_archive_post_types();
 
         foreach(static::get_instances() as $filterArgument){
-            if($filterArgument->can_show_on_archive($archive_type, $archive_target)){
+            // If posttype is an array, see if any of its posttypes is in this archive.
+            if(is_array($filterArgument->posttype) && array_intersect($filterArgument->posttype, $archive_posttypes)){
+                $applicable[] = $filterArgument;
+            }
+            // If post type is a string, see if its in this archive.
+            else if(in_array($filterArgument->posttype, $archive_posttypes)){
                 $applicable[] = $filterArgument;
             }
         }

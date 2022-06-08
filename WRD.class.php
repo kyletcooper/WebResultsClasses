@@ -580,69 +580,26 @@ class WRD
     }
 
     /**
-     * Gets what would be the queried object given a class and ID.
+     * @return string[] Array of posttypes. Defaults to ["post"].
      */
-    static function reverse_queried_object($archive_type = null, $archive_target = null){
-        if($archive_type === null || $archive_target === null){
-            return get_queried_object();
+    static function get_archive_post_types(){
+        $obj = get_queried_object();
+
+        if(is_singular()){
+            return [get_post_type()];
         }
-
-        switch($archive_type){
-            case "WP_Term":
-                return get_term_by("term_id", $archive_target);
-                break;
-
-            case "WP_User":
-                return get_user_by("id", $archive_target);
-                break;
-
-            case "WP_Post":
-                return get_post($archive_target);
-                break;
-
-            case "WP_Post_Type":
-                return get_post_type_object("post");
-                break;
+        if(is_post_type_archive()){
+            return [$obj->name];
         }
+        if(is_tax()){
+            $tax = get_taxonomy($obj->taxonomy);
 
-        return null;
-    }
-
-    static function get_wp_object_id($obj){
-        switch(get_class($obj)){
-            case "WP_User":
-            case "WP_Post":
-                return $obj->ID;
-                break;
-
-            case "WP_Post_Type":
-            case "WP_Taxonomy":
-                return $obj->name;
-                break;
-
-            case "WP_Term":
-                return $obj->term_id;
-                break;
-
-            case "WP_Comment":
-                return $obj->comment_ID;
-                break;
-
-            case "WP_Comment":
-                return $obj->comment_ID;
-                break;
-        }
-
-        return null;
-    }
-
-    static function reverse_queried_object_id($archive_type = null, $archive_target = null){
-        if($archive_type === null || $archive_target === null){
-            return get_queried_object_id();
+            if($tax){
+                return $tax->object_type;
+            }
         }
         
-        $obj = WRD::reverse_queried_object($archive_type, $archive_target);
-        return WRD::get_wp_object_id($obj);
+        return ["post"];
     }
 
     static function enqueue(){
