@@ -3,12 +3,13 @@ class FilteringSystem{
         this.form = document.querySelector(formSelector);
         this.output = document.querySelector(outputSelector);
 
-        window.archiveFilters = window.archiveFilters || {
+        window.FILTERS = window.FILTERS || {
             page: 1,
         };
 
         // If we have an input for taxonomies or something that forms an archive, select it
         this.set_active_filters(window.archiveFilters);
+        this._addEventListeners();
     }
 
     _addEventListeners(){

@@ -181,7 +181,7 @@ class FilterArgument
         }
 
         wp_enqueue_script("filterArgument-js", WRD::dir_to_url() . '/filter-inputs/FilteringSystem.js');
-        wp_localize_script("filteringArgument-js", "filtering", $obj);
+        wp_localize_script("filterArgument-js", "FILTERS", $obj);
     }
 
     static function get_instances_for_archive($archive_type = null, $archive_target = null)
@@ -206,6 +206,39 @@ class FilterArgument
     static function get_instances()
     {
         return static::$instances;
+    }
+
+    static function ajax_filter_posts()
+    {
+        $page = @$_REQUEST["page"] ?: 1;
+
+        $archive_filters = FilterArgument::get_instances_for_archive($_REQUEST['query_class'], $_REQUEST['query_id']);
+
+        $args = FilterArgument::combine([
+            'paged' => $page,
+            'post_type' => WRD_LISTING_POSTTYPE
+        ], ...$archive_filters);
+
+        $query = new \WP_Query($args);
+
+        ob_start();
+
+        var_dump($args);
+        var_dump($_REQUEST);
+
+        foreach ($query->posts as $post) {
+            $post = CustomPost::get_post_unknown($post);
+            $post->render_preview();
+        }
+
+        $html = ob_get_clean();
+
+        WRD::ajax_success([
+            "listings_html" => $html,
+
+            "max_pages" => $query->max_num_pages,
+            "page" => min($query->max_num_pages, $page)
+        ]);
     }
 }
 
