@@ -62,28 +62,6 @@ class CustomPost
         $this->fields = static::get_fields();
     }
 
-    static function get_fields()
-    {
-        $class = get_called_class();
-        return apply_filters("custompost_{$class}_fields", []);
-    }
-
-    static function get_filters()
-    {
-        $class = get_called_class();
-        return apply_filters("custompost_{$class}_filters", []);
-    }
-
-    static function get_filtered_posts(array $args = [], $useRequest = true){
-        $args["paged"] = @$_REQUEST["page"] ?: 1;
-        $args["post_type"] = static::post_type;
-
-        // Detect archives
-        // filterArchives sents this across.
-    
-        $args = FilterArgument::combine($args, ...static::get_filters());
-    }
-
 
     /**
      * Finds the WP Post by either ID, slug, WP_Post or Global Post.

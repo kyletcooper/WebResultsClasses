@@ -4,10 +4,21 @@ namespace wrd;
 
 class FilterArgument
 {
-    function __construct(string $title, Filter ...$filters)
+    protected static $instances = [];
+
+    function __construct(array $opts)
     {
-        $this->title = $title;
-        $this->filters = $filters;
+        $this->title    = WRD::array_fallback($opts, "title", __("Filters", 'wrd'));
+        $this->slug     = WRD::array_fallback($opts, "slug", sanitize_title($this->title));
+        $this->filters  = WRD::array_fallback($opts, "filters", []);
+
+        // If an archive matches all of these criteria, the filter will be shown.
+        // Nulls are ignored.
+        $this->author   = WRD::array_fallback($opts, "author", null);
+        $this->term     = WRD::array_fallback($opts, "term", null);
+        $this->posttype = WRD::array_fallback($opts, "posttype", "post");
+
+        static::$instances[] = $this;
     }
 
     function add_query_args(array $args)
@@ -52,6 +63,69 @@ class FilterArgument
         }
 
         return call_user_func($this->condition_callable);
+    }
+
+    function matches_archive_criteria($needle, $haystack){
+        if($this->author === null){
+            return true;
+        }
+
+        if(is_array($haystack) && in_array($needle, $haystack)){
+            return true;
+        }
+        
+        if(get_queried_object_id() == $haystack){
+            return true;
+        }
+
+        return false;
+    }
+
+    function can_show_on_archive($archive_type = null, $archive_target = null){
+        $obj = WRD::reverse_queried_object($archive_type, $archive_target);
+        $id  = WRD::reverse_queried_object_id($archive_type, $archive_target);
+
+        // Check author matches
+        if((is_author() || is_a($obj, "WP_User")) && !$this->matches_archive_criteria($id, $this->author)){
+            return false;
+        }
+
+        // Check post type matches
+        if((is_post_type_archive() || is_a($obj, "WP_Post_Type")) && !$this->matches_archive_criteria($obj->name, $this->post_type)){
+            return false;
+        }
+
+        // Check post type matches
+        if((is_tax() || is_a($obj, "WP_Term")) && !$this->matches_archive_criteria($id, $this->term)){
+            return false;
+        }
+
+        return true;
+    }
+
+    function render(){
+        ?>
+
+        <div class="filter-group">
+            <span class="filter-group_title>
+                <?php echo esc_html($this->title) ?>
+            </span>
+
+            <div class="filter-group_filters">
+
+                <?php
+                
+                foreach($this->filters as $filter){
+                    // Render all children
+                    $filter->render();
+                }
+
+                ?>
+
+            </div>
+        </div>
+
+<?php
     }
 
     static function add_meta_query($args, $meta)
@@ -102,7 +176,10 @@ class FilterArgument
             ]);
         }
 
-        return new static($title, ...$filters);
+        return new static([
+            "title" => $title,
+            "filters" => $filters
+        ]);
     }
 
     static function combine(array $args, FilterArgument ...$filter_arguments)
@@ -120,7 +197,7 @@ class FilterArgument
         $args = FilterArgument::combine([
             'paged' => $page,
             'post_type' => WRD_LISTING_POSTTYPE
-        ], ...Listing::get_filters());
+        ], ...static::get_instances_for_archive());
 
         $query = new \WP_Query($args);
 
@@ -155,20 +232,8 @@ class FilterArgument
         ];
 
         if (is_archive()) { 
-            $queried = get_queried_object();
-
-            if (is_a($queried, 'WP_User')){
-                $obj["query_type"] = "user";
-                $obj["author_id"] = $queried->ID;
-            }
-            elseif (is_a($queried, 'WP_Term')){
-                $obj["query_type"] = "taxonomy";
-                $obj["term_id"] = $queried->term_id;
-            }
-            elseif (is_a($queried, 'WP_Post_Type')){
-                $obj["query_type"] = "post_type";
-                $obj["post_type"] = $queried->name;
-            }
+            $obj['query_class'] = get_called_class(get_queried_object());
+            $obj['query_id'] = get_queried_object_id();
         }
 
         ?>
@@ -177,9 +242,31 @@ class FilterArgument
         </script>
         <?php
     }
+
+    static function enqueue(){
+        wp_enqueue_script("filterArgument-js", WRD::dir_to_url() . '/filter-inputs/filtering.js');
+    }
+
+    static function get_instances_for_archive($archive_type = null, $archive_target = null){
+        $applicable = [];
+
+        foreach(static::get_instances() as $filterArgument){
+            if($filterArgument->can_show_on_archive($archive_type, $archive_target)){
+                $applicable[] = $filterArgument;
+            }
+        }
+
+        return $applicable;
+    }
+
+    static function get_instances(){
+        return static::$instances;
+    }
 }
 
 add_action("wp_ajax_filter_posts", ["wrd\FilterArgument", "ajax_filter_posts"]);
 add_action("wp_ajax_nopriv_filter_posts", ["wrd\FilterArgument", "ajax_filter_posts"]);
 
 add_action('wp_head', ["wrd\FilterArgument", "js_archive_query"]);
+
+add_action('wp_enqueue_scripts', ["wrd\FilterArgument", "enqueue"]);

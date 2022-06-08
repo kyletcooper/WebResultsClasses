@@ -4,7 +4,7 @@ namespace wrd;
 
 class Filter
 {
-    function __construct($data)
+    function __construct(array $data)
     {
         $this->data = $data;
 
@@ -125,7 +125,7 @@ class Filter
     function get_attrs()
     {
         $attrs = WRD::merge_array_attrs([
-            "class" => "field_input",
+            "class" => "filter__input",
             "type" => $this->get_input(),
             "name" => $this->name,
             "value" => $this->get_value(),

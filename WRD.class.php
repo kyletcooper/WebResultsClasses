@@ -578,7 +578,79 @@ class WRD
 
         return false;
     }
+
+    /**
+     * Gets what would be the queried object given a class and ID.
+     */
+    static function reverse_queried_object($archive_type = null, $archive_target = null){
+        if($archive_type === null || $archive_target === null){
+            return get_queried_object();
+        }
+
+        switch($archive_type){
+            case "WP_Term":
+                return get_term_by("term_id", $archive_target);
+                break;
+
+            case "WP_User":
+                return get_user_by("id", $archive_target);
+                break;
+
+            case "WP_Post":
+                return get_post($archive_target);
+                break;
+
+            case "WP_Post_Type":
+                return get_post_type_object("post");
+                break;
+        }
+
+        return null;
+    }
+
+    static function get_wp_object_id($obj){
+        switch(get_called_class($obj)){
+            case "WP_User":
+            case "WP_Post":
+                return $obj->ID;
+                break;
+
+            case "WP_Post_Type":
+            case "WP_Taxonomy":
+                return $obj->name;
+                break;
+
+            case "WP_Term":
+                return $obj->term_id;
+                break;
+
+            case "WP_Comment":
+                return $obj->comment_ID;
+                break;
+
+            case "WP_Comment":
+                return $obj->comment_ID;
+                break;
+        }
+
+        return null;
+    }
+
+    static function reverse_queried_object_id($archive_type = null, $archive_target = null){
+        if($archive_type === null || $archive_target === null){
+            return get_queried_object_id();
+        }
+        
+        $obj = WRD::reverse_queried_object($archive_type, $archive_target);
+        return WRD::get_wp_object_id($obj);
+    }
+
+    static function enqueue(){
+        wp_enqueue_script("WRD-js", WRD::dir_to_url() . '/query.js');
+    }
 }
+
+add_action('wp_enqueue_scripts', ["wrd\FilterArgument", "enqueue"]);
 
 class NotImplementedException extends \BadMethodCallException
 {
