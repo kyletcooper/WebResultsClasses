@@ -86,7 +86,7 @@ class FilterArgument
             </div>
         </div>
 
-    <?php
+<?php
     }
 
     static function add_meta_query($args, $meta)
@@ -143,7 +143,7 @@ class FilterArgument
         }
 
         foreach ($terms as $term) {
-            $args["filters"] = new Filter([
+            $args["filters"][] = new Filter([
                 "type" => "tax",
                 "name" => $term->slug,
                 "field" => $taxonomy_name,
@@ -197,7 +197,7 @@ class FilterArgument
         ]);
     }
 
-    static function js_archive_query()
+    static function enqueue()
     {
         global $wp_query;
 
@@ -213,16 +213,8 @@ class FilterArgument
             $obj['query_id'] = get_queried_object_id();
         }
 
-    ?>
-        <script>
-            window.archiveFilters = `<?php echo json_encode($obj) ?>`;
-        </script>
-<?php
-    }
-
-    static function enqueue()
-    {
         wp_enqueue_script("filterArgument-js", WRD::dir_to_url() . '/filter-inputs/FilteringSystem.js');
+        wp_localize_script("filteringArgument-js", "filtering", $obj);
     }
 
     static function get_instances_for_archive($archive_type = null, $archive_target = null)
