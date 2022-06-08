@@ -609,7 +609,7 @@ class WRD
     }
 
     static function get_wp_object_id($obj){
-        switch(get_called_class($obj)){
+        switch(get_class($obj)){
             case "WP_User":
             case "WP_Post":
                 return $obj->ID;
