@@ -9,6 +9,7 @@ class FilteringSystem{
 
         // If we have an input for taxonomies or something that forms an archive, select it
         this.set_active_filters(window.FILTERS);
+        this.set_filter_group_markers();
         this._addEventListeners();
     }
 
