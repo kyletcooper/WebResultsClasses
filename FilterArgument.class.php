@@ -68,7 +68,7 @@ class FilterArgument
     {
 ?>
 
-        <details class="filter-group" open>
+        <details class="filter-group">
             <summary class="filter-group_title">
                 <?php echo esc_html($this->title) ?>
             </summary>

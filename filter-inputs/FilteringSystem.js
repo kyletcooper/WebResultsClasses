@@ -21,6 +21,7 @@ class FilteringSystem{
     }
 
     update(){
+        this.set_filter_group_markers();
         this.refresh_url_query();
         this.get_posts();
 
@@ -102,6 +103,32 @@ class FilteringSystem{
         else {
             window.history.replaceState({}, '', "?" + queryParams.toString());
         }
+    }
+
+    set_filter_group_markers(){
+        let groups = this.form.querySelectorAll(".filter-group");
+
+        groups.forEach(group => {
+            let title = group.querySelector(".filter-group_title");
+            let inputs = group.querySelectorAll(".filter_input");
+            let count = 0;
+
+            inputs.forEach(input => {
+                if((input.type == "checkbox" || input.type == "radio") && input.checked){
+                    count++;
+                }
+                else if(input.value.length > 0){
+                    count++;
+                }
+            });
+
+            if(count < 1){
+                title.removeAttribute("data-count");
+            }
+            else{
+                title.setAttribute("data-count", count);
+            }
+        });
     }
 
     async get_posts(){
