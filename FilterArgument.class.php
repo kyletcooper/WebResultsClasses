@@ -179,6 +179,10 @@ class FilterArgument
             "ajax_action" => "filter_posts",
         ];
 
+        if (is_tax()) {
+            $obj["term_id"] = get_queried_object_id();
+        }
+
         wp_enqueue_script("filterArgument-js", WRD::dir_to_url() . '/filter-inputs/FilteringSystem.js');
         wp_localize_script("filterArgument-js", "FILTERS", $obj);
     }
@@ -217,6 +221,13 @@ class FilterArgument
             'paged'     => $page,
             'post_type' => $posttype,
         ], ...$archive_filters);
+
+        if (array_key_exists("term_id", $_REQUEST)) {
+            $args = FilterArgument::add_tax_query($args, [
+                "field" => "term_id",
+                "terms" => $_REQUEST["term_id"]
+            ]);
+        }
 
         $query = new \WP_Query($args);
 
