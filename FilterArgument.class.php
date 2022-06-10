@@ -180,7 +180,9 @@ class FilterArgument
         ];
 
         if (is_tax()) {
-            $obj["term_id"] = get_queried_object_id();
+            $term = get_queried_object();
+            $obj["term"] = $term->slug;
+            $obj["taxonomy"] = $term->taxonomy;
         }
 
         wp_enqueue_script("filterArgument-js", WRD::dir_to_url() . '/filter-inputs/FilteringSystem.js');
@@ -212,7 +214,7 @@ class FilterArgument
 
     static function ajax_filter_posts()
     {
-        $page = $_REQUEST["page"] ?: 1;
+        $page = $_REQUEST["page"] ?: 0;
         $posttype = $_REQUEST["post_type"] ?: "post";
 
         $archive_filters = FilterArgument::get_instances_for_archive($posttype);
@@ -222,10 +224,11 @@ class FilterArgument
             'post_type' => $posttype,
         ], ...$archive_filters);
 
-        if (array_key_exists("term_id", $_REQUEST)) {
+        if (array_key_exists("term", $_REQUEST) && array_key_exists("taxonomy", $_REQUEST)) {
             $args = FilterArgument::add_tax_query($args, [
-                "field" => "term_id",
-                "terms" => $_REQUEST["term_id"]
+                "field" => "slug",
+                "terms" => $_REQUEST["term"],
+                "taxonomy" => $_REQUEST["taxonomy"],
             ]);
         }
 
