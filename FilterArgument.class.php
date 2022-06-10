@@ -229,6 +229,8 @@ class FilterArgument
             ]);
         }
 
+
+
         $query = new \WP_Query($args);
 
         ob_start();
@@ -240,11 +242,15 @@ class FilterArgument
 
         $html = ob_get_clean();
 
+
+
         WRD::ajax_success([
             "html" => $html,
 
             "max_num_pages" => $query->max_num_pages,
-            "paged" => min($query->max_num_pages, $page)
+            "paged" => min($query->max_num_pages, $page),
+
+            "args" => $args
         ]);
     }
 }
