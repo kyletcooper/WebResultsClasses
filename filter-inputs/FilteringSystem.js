@@ -116,9 +116,12 @@ class FilteringSystem{
             inputs.forEach(input => {
                 if((input.type == "checkbox" || input.type == "radio") && input.checked){
                     count++;
+                    return;
                 }
-                else if(input.value.length > 0){
+
+                if(input.type == "text" && input.value.length > 0){
                     count++;
+                    return;
                 }
             });
 
