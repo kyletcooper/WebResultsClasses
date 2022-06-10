@@ -68,10 +68,10 @@ class FilterArgument
     {
 ?>
 
-        <div class="filter-group">
-            <span class="filter-group_title">
+        <details class="filter-group" open>
+            <summary class="filter-group_title">
                 <?php echo esc_html($this->title) ?>
-            </span>
+            </summary>
 
             <div class="filter-group_filters">
 
@@ -85,7 +85,7 @@ class FilterArgument
                 ?>
 
             </div>
-        </div>
+        </details>
 
 <?php
     }

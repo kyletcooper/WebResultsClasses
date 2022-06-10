@@ -125,7 +125,7 @@ class Filter
     function get_attrs()
     {
         $attrs = WRD::merge_array_attrs([
-            "class" => "filter__input",
+            "class" => "filter_input",
             "type" => $this->get_input(),
             "name" => $this->name,
             "value" => $this->get_value(),
