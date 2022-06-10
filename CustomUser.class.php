@@ -453,6 +453,7 @@ class CustomUser
     function has_cap(string $capability, ...$args)
     {
         if (!$this->is_verified()) {
+            new ReportableError(static::ERROR_SCOPE, __("Please verify your account before doing this.", 'wrd'));
             return false; // Unverified users cannot do anything.
         }
 

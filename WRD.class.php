@@ -283,9 +283,9 @@ class WRD
      */
     static function redirect_404(): void
     {
-        global $wp_query;
-        $wp_query->set_404();
-        status_header(404);
+        // global $wp_query;
+        // $wp_query->set_404();
+        // status_header(404);
         get_template_part(404);
         wp_die();
     }
