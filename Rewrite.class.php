@@ -192,16 +192,19 @@ class Rewrite
                 $this->template_data['content'] = "";
             }
 
-            add_filter('the_title', function ($title) {
-                if (is_singular() && in_the_loop() && is_main_query()) {
+            global $post;
+            $post = 0;
+
+            add_filter('the_title', function ($title, $id) {
+                if (!$id) {
                     return esc_html($this->template_data['title']);
                 }
 
                 return $title;
-            }, 10, 1);
+            }, 10, 2);
 
             add_filter('the_content', function ($content) {
-                if (is_singular() && in_the_loop() && is_main_query()) {
+                if (!get_the_ID()) {
                     return wpautop(esc_html($this->template_data['content']));
                 }
 
