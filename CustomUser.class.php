@@ -299,18 +299,15 @@ class CustomUser
         $expires = get_user_meta($this->ID, "{$field}_token_expires", true);
 
         if ($token !== $given) {
-            var_dump("NO MATCH");
-            var_dump($token);
-            var_dump($given);
+            new ReportableError(static::ERROR_SCOPE, __("Token's do not match. ($token != $given)"));
             return false;
         }
 
         // If token expired
         $current_time = strtotime("now");
-        $expires_time = strtotime($expires);
 
-        if ($current_time > $expires_time) {
-            var_dump("EXPIRED");
+        if ($current_time > $expires) {
+            new ReportableError(static::ERROR_SCOPE, __("Token expired."));
             return false;
         }
 
