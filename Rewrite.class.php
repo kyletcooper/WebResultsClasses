@@ -192,13 +192,13 @@ class Rewrite
                 $this->template_data['content'] = "";
             }
 
-            add_filter('the_title', function ($title, $id) {
+            add_filter('the_title', function ($title) {
                 if (is_singular() && in_the_loop() && is_main_query()) {
                     return esc_html($this->template_data['title']);
                 }
 
                 return $title;
-            });
+            }, 10, 1);
 
             add_filter('the_content', function ($content) {
                 if (is_singular() && in_the_loop() && is_main_query()) {
@@ -206,7 +206,7 @@ class Rewrite
                 }
 
                 return $content;
-            });
+            }, 10, 1);
         }
     }
 
