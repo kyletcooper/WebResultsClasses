@@ -1,0 +1,23 @@
+.NavDropdown_dropdown{
+	position: absolute;
+	top: calc(100% + 1rem);
+	left: 0px;
+	overflow: hidden;
+
+	background: #fff;
+
+	pointer-events: none;
+	opacity: 0;
+	transform: translateY(1rem);
+	transition: opacity 200ms ease;
+}
+@media (prefers-reduced-motion: no-preference) {
+	.NavDropdown_dropdown{
+		transition: opacity 200ms ease, transform 200ms ease;
+	}
+}
+.NavDropdown_dropdown[aria-hidden="false"], .NavDropdown_dropdown:focus-within {
+    pointer-events: all;
+    opacity: 1;
+    transform: translateY(0);
+}

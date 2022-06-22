@@ -1,0 +1,23 @@
+.NavAccordion_header{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.NavAccordion_panel{
+    opacity: 1;
+    max-height: 100vh;
+    overflow: hidden;
+
+    transition: opacity 500ms ease;
+}
+@media (prefers-reduced-motion: no-preference) {
+    .NavAccordion_panel{
+        transition: opacity 500ms ease, max-height 500ms ease;
+    }
+}
+
+.NavAccordion_panel[inert]{
+    max-height: 0px;
+    opacity: 0;
+}

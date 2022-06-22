@@ -609,8 +609,6 @@ class WRD
     }
 }
 
-add_action('wp_enqueue_scripts', ["wrd\FilterArgument", "enqueue"]);
-
 class NotImplementedException extends \BadMethodCallException
 {
 }
