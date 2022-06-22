@@ -287,7 +287,7 @@ class WRD
         // $wp_query->set_404();
         // status_header(404);
         get_template_part(404);
-        wp_die();
+        die();
     }
 
     /**
@@ -304,7 +304,7 @@ class WRD
             "body" => $message ?: __("You don't have the proper access to view this page.", 'wrd')
         ]);
 
-        wp_die();
+        die();
     }
 
     /**
