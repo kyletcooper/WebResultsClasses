@@ -37,7 +37,11 @@ if (!function_exists(__NAMESPACE__ . "\autoload")) {
             "OptionSection",
 
             "Schema",
-            "Navbar",
+
+            "NavBase",
+            "NavFlat",
+            "NavDropdown",
+            "NavPanels"
         ];
 
         foreach ($classes as $class) {
