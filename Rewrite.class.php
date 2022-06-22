@@ -180,19 +180,32 @@ class Rewrite
         call_user_func($this->onLoad, $this);
     }
 
+    /**
+     * Filters template tags so they work more easily in user-form.php theme files.
+     * 
+     * @return void
+     */
     private function set_template_data_tags()
     {
         if (array_key_exists('title', $this->template_data)) {
-            add_filter('the_title', function () {
-                return esc_html($this->template_data['title']);
-            });
-
             if (!array_key_exists("content", $this->template_data)) {
                 $this->template_data['content'] = "";
             }
 
-            add_filter('the_content', function () {
-                return wpautop(esc_html($this->template_data['content']));
+            add_filter('the_title', function ($title, $id) {
+                if (is_singular() && in_the_loop() && is_main_query()) {
+                    return esc_html($this->template_data['title']);
+                }
+
+                return $title;
+            });
+
+            add_filter('the_content', function ($content) {
+                if (is_singular() && in_the_loop() && is_main_query()) {
+                    return wpautop(esc_html($this->template_data['content']));
+                }
+
+                return $content;
             });
         }
     }

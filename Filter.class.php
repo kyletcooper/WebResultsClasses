@@ -47,16 +47,22 @@ class Filter
         return @$_REQUEST[$this->name] != null;
     }
 
+    function get_count()
+    {
+        $posttype = get_post_type();
+        $args = ["post_type" => $posttype];
+
+        $query = new \WP_Query($args);
+
+        return $query->found_posts;
+    }
+
     function get_compare()
     {
-        if ($this->compare == null) {
-            if ($this->type == "tax") {
-                return "IN";
-            }
-            if ($this->type == "meta") {
-                return "=";
-            }
-        }
+        global $wp_query;
+        $query = clone $wp_query;
+
+        // Add this filter to the query.
 
         return $this->compare;
     }
@@ -144,8 +150,14 @@ class Filter
     {
 ?>
         <label class="<?php echo $this->filter_classes() ?>">
-            <span>
-                <?php echo esc_html($this->label) ?>
+            <span class="field_label">
+                <span class="field_label_title">
+                    <?php echo esc_html($this->label) ?>
+                </span>
+
+                <span class="field_label_count">
+                    <?php echo $this->get_count(); ?>
+                </span>
             </span>
 
             <input <?php echo WRD::array_to_attrs($this->get_attrs()) ?>>
