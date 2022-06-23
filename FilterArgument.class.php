@@ -90,15 +90,26 @@ class FilterArgument
 <?php
     }
 
-    static function add_meta_query($args, $meta)
+    static function add_meta_query($args, $meta, $named_query = '')
     {
         if (isset($args['meta_query'])) {
-            $args['meta_query'][] = $meta;
+            if ($named_query) {
+                $args['meta_query'][$named_query] = $meta;
+            } else {
+                $args['meta_query'][] = $meta;
+            }
         } else {
-            $args['meta_query'] = [
-                "relation" => "AND",
-                $meta
-            ];
+            if ($named_query) {
+                $args['meta_query'] = [
+                    "relation" => "AND",
+                    $named_query => $meta
+                ];
+            } else {
+                $args['meta_query'] = [
+                    "relation" => "AND",
+                    $meta
+                ];
+            }
         }
 
         return $args;
