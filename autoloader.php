@@ -41,7 +41,9 @@ if (!function_exists(__NAMESPACE__ . "\autoload")) {
             "NavBase",
             "NavFlat",
             "NavDropdown",
-            "NavPanels"
+            "NavPanels",
+            "NavAccordion",
+            "NavFooter",
         ];
 
         foreach ($classes as $class) {

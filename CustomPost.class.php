@@ -593,6 +593,7 @@ class CustomPost
             static::register_rewrites();
             static::register_post_create_screen();
             static::register_templates();
+            static::register_archive();
 
             do_action("custompost_registered", $class);
             do_action("custompost_{$class}_registered", $class);
@@ -745,6 +746,28 @@ class CustomPost
 
             $i++;
         }
+    }
+
+    /**
+     * Alters the main query on archive pages to require the parent.
+     */
+    static function register_archive()
+    {
+        add_filter("pre_get_posts", function ($query) {
+
+            if (static::parent_class && $query->is_main_query() && !is_admin() && $query->get("post_type") == static::post_type && get_query_var("parent")) {
+                $parents = get_posts([
+                    'post_type' => 'any',
+                    'name' => get_query_var("parent"),
+                    'post_status' => 'publish',
+                    'posts_per_page' => 1
+                ]);
+
+                if ($parents) {
+                    $query->set("post_parent", $parents[0]->ID);
+                }
+            }
+        });
     }
 
     /**

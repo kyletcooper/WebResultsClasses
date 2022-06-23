@@ -128,7 +128,7 @@ class CustomCreator
 
         get_footer();
 
-        return $this->post;
+        die(); // I don't like this but otherwise there is a bug where the entire archive shows after the footer?
     }
 
     function render_form()
