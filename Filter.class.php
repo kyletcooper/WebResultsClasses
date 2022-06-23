@@ -31,6 +31,23 @@ class Filter
 
         // Attributes to give the input
         $this->attrs = @$data['attrs'] ?: [];
+
+
+        if ($this->compare === null) {
+            switch ($this->type) {
+                case "tax":
+                    $this->compare = "IN";
+                    break;
+
+                case "meta":
+                    $this->compare = "=";
+                    break;
+
+                default:
+                    $this->compare = "=";
+                    break;
+            }
+        }
     }
 
     function get_value()
@@ -49,8 +66,21 @@ class Filter
 
     function get_count()
     {
-        $posttype = get_post_type();
-        $args = ["post_type" => $posttype];
+        $args = ["post_type" => WRD_LISTING_POSTTYPE];
+
+        switch ($this->type) {
+            case "tax":
+                $args["tax_query"] = [$this->get_tax_query()];
+                break;
+
+            case "meta":
+                $args["meta_query"] = [$this->get_meta_query()];
+                break;
+
+            default:
+                $args[$this->field] = $this->get_value();
+                break;
+        }
 
         $query = new \WP_Query($args);
 
@@ -59,11 +89,6 @@ class Filter
 
     function get_compare()
     {
-        global $wp_query;
-        $query = clone $wp_query;
-
-        // Add this filter to the query.
-
         return $this->compare;
     }
 
@@ -84,6 +109,23 @@ class Filter
         }
     }
 
+    function get_arg_key()
+    {
+        switch ($this->type) {
+            case "tax":
+                return "tax_query";
+                break;
+
+            case "meta":
+                return "meta_query";
+                break;
+
+            default:
+                return $this->field;
+                break;
+        }
+    }
+
     function get_tax_query()
     {
         return [
@@ -95,10 +137,19 @@ class Filter
 
     function get_meta_query()
     {
+        $type = "CHAR";
+
+        if (is_numeric($this->get_value())) {
+            $type = "NUMERIC";
+        } else if (strtotime($this->get_value())) {
+            $type = "DATE";
+        }
+
         return [
             "key" => $this->field,
             "value" => $this->get_value(),
-            "compare" => $this->get_compare()
+            "compare" => $this->get_compare(),
+            "type" => $type,
         ];
     }
 
