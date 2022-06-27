@@ -51,6 +51,7 @@ class CustomPost
     const editor = true;                    // Boolean. Set to false to disable the editor.
     const creator = true;                   // Boolean. Set to false to disable the back-end creator.
     const perm_create = "publish_posts";    // String. The user capability required to create a new post in the front-end.
+    const perm_edit = "publish_posts";      // String. The user capability required to open in the front-end editor.
     const moderate = true;                  // Bolean. Set to false to hide in moderator area.
 
     const temporary_meta_key = "temporary_post";

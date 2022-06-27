@@ -55,7 +55,7 @@ class CustomEditor
      */
     function render()
     {
-        if (!CustomUser::current_user_can("edit_post", $this->ID)) {
+        if (!CustomUser::current_user_can($this->class::perm_edit, $this->ID)) {
             WRD::redirect_403(__("You don't have permission to edit this post.", "wrd"));
         }
 
