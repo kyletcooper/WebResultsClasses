@@ -31,6 +31,9 @@ class CustomField
             "type" => "meta",
             "permission" => "edit_post",
 
+            "validation" => "",
+            "filtering" => "",
+
             "label" => "",
             "icon" => "",
             "input" => "text",
@@ -193,6 +196,14 @@ class CustomField
         if (ReportableError::is_error($value)) {
             return $value;
         }
+
+        $validator = new Validator($this->label, $this->validation, $this->filtering);
+
+        if (!$validator->validate($value)) {
+            return false;
+        }
+
+        $value = $validator->filter($value);
 
         switch ($this->type) {
             case "post":

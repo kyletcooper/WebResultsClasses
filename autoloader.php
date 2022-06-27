@@ -23,6 +23,8 @@ if (!function_exists(__NAMESPACE__ . "\autoload")) {
             "CustomEditor",
             "CustomCreator",
 
+            "Validator",
+
             "UserMessage",
             "UserNotification",
 
