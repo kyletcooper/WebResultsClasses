@@ -102,7 +102,7 @@ class CustomCreator
 
     function render()
     {
-        if (!CustomUser::current_user_can("publish_posts", $this->post_type)) {
+        if (!CustomUser::current_user_can("create_content", $this->post_type)) {
             WRD::redirect_403(__("You don't have permission to create this post.", "wrd"));
         }
 

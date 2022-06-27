@@ -367,7 +367,8 @@ class WRD
      */
     static function ajax_response(bool $success, array $data = [])
     {
-        $data["status"] = $success;
+        $data["success"] = $success;
+        $data["status"] = $success ? "success" : "error";
         echo json_encode($data);
         wp_die();
     }

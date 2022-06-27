@@ -456,7 +456,7 @@ class CustomUser
 
         $allowed = $this->user->has_cap($capability, ...$args);
 
-        $allowed = apply_filters("user_can_$capability", $capability, [$this, ...$args]);
+        $allowed = apply_filters("user_can_$capability", $allowed, $this, ...$args);
 
         return $allowed;
     }
@@ -503,12 +503,12 @@ class CustomUser
      * @param callable $callback The function to determine if a user passes the permission check.
      * @param array $roles Optional. List of roles to add the capability to.
      */
-    static function create_cap(string $capability, $callback, array $roles = [])
+    static function create_cap(string $capability, $callback, array $roles = [], int $accepted_args = 1)
     {
         /**
          * callback(CustomUser $user, ...$args)
          */
-        add_filter("user_can_$capability", $callback);
+        add_filter("user_can_$capability", $callback, 10, $accepted_args);
 
         foreach ($roles as $role) {
             $role = get_role($role);

@@ -69,6 +69,10 @@ class CustomField
      */
     function user_has_permission($post_id, $user = null)
     {
+        if ($this->permission === false) {
+            return true;
+        }
+
         $user = new CustomUser($user);
         return $user->has_cap($this->permission, $post_id);
     }
@@ -248,7 +252,7 @@ class CustomField
      */
     function render(int $post_id)
     {
-        if ($post_id > 0 && !$this->user_has_permission($post_id)) {
+        if ($post_id > 0 || !$this->user_has_permission($post_id)) {
             return false;
         }
 
