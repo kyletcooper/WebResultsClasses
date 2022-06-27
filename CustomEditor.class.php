@@ -47,7 +47,12 @@ class CustomEditor
             return;
         }
 
-        return $this->post->update_post($postarr);
+        $update = $this->post->update_post($postarr);
+
+        $this->post = $update;
+        $this->wp_post = get_post($this->ID);
+
+        return $update;
     }
 
     /**
