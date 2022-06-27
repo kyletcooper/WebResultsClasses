@@ -252,7 +252,7 @@ class CustomField
      */
     function render(int $post_id)
     {
-        if ($post_id > 0 || !$this->user_has_permission($post_id)) {
+        if (!$this->user_has_permission($post_id)) {
             return false;
         }
 
