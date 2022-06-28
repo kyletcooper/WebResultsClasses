@@ -68,6 +68,7 @@ class CustomEditor
 
         // Open Page
         WRD::set_title_tag(sprintf(__("Editing %s", "wrd"), $this->wp_post->post_title));
+        WRD::add_meta_tag("robots", "noindex");
         get_header();
 
         echo "<form class='editor' method='post' enctype='multipart/form-data'>";

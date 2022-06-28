@@ -110,6 +110,7 @@ class CustomCreator
 
         // Open Page
         WRD::set_title_tag(sprintf(__("Create New %s", "wrd"), $this->class::label));
+        WRD::add_meta_tag("robots", "noindex");
         get_header();
 
         echo "<form class='creator' method='post' enctype='multipart/form-data'>";

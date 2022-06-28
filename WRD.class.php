@@ -277,6 +277,21 @@ class WRD
     }
 
     /**
+     * Add a meta tag to the head of the current page. Must be run before WP_Head.
+     * 
+     * @param string $name Name of the meta tag.
+     * @param string $content Content of the meta tag.
+     * 
+     * @return void
+     */
+    static function add_meta_tag($name, $content): void
+    {
+        add_action("wp_head", function () use ($name, $content) {
+            echo "<meta name='$name' content='$content'>";
+        });
+    }
+
+    /**
      * Redirects to the 404 page and dies.
      * 
      * @return void
