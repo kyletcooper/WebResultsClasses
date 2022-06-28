@@ -9,10 +9,12 @@ class Validator
     public $field_name;
     public $validation_rules;
     public $filtering_rules;
+    public $last_error;
 
     public $validation_rules_map = [
         "required" => ["wrd\Validator", "v_required"],
-        "numeric" => ["wrd\Validator", "v_numeric"]
+        "numeric" => ["wrd\Validator", "v_numeric"],
+        "between" => ["wrd\Validator", "v_between"]
     ];
 
     public $filtering_rules_map = [
@@ -28,21 +30,43 @@ class Validator
 
     function seperate_rules(string $rules)
     {
-        return explode("|", $rules);
+        $rules = explode("|", $rules);
+        $rules_args = []; // ["rule" => ["arg1", "arg2"]]
+
+        foreach ($rules as $rule) {
+            if (!WRD::str_contains($rule, ":")) {
+                $rules_args[$rule] = "";
+                continue;
+            }
+
+            $rule_parts = explode($rule, ":");
+            $rule = $rule_parts[0];
+            $args = explode(",", $rule_parts[1]);
+
+            $rules_args[$rule] = $args;
+        }
+
+        return $rules_args;
+    }
+
+    function get_error()
+    {
+        return $this->last_error;
     }
 
     function validate(mixed $value): bool
     {
-        foreach ($this->validation_rules as $v_rule) {
+        foreach ($this->validation_rules as $v_rule => $args) {
             if (!array_key_exists($v_rule, $this->validation_rules_map)) {
                 return false;
             }
 
             $func = $this->validation_rules_map[$v_rule];
-            $valid = call_user_func_array($func, [$value]);
+            $valid = call_user_func_array($func, [$value, $args]);
 
             if ($valid !== true) {
-                return $valid; // v_funcs return an error message on failure.
+                $this->last_error = $valid;
+                return false; // v_funcs return an error message on failure.
             }
         }
 
@@ -69,7 +93,7 @@ class Validator
      * VALIDATION RULES
      * Should return a ReportableError on failure, true on success.
      */
-    function v_required(mixed $value)
+    function v_required(mixed $value, array $args = [])
     {
         if (is_string($value) && strlen(trim($value)) < 0) {
             return new ReportableError(static::ERROR_SCOPE, sprintf(__("Value for %s cannot be empty.", 'wrd'), $this->field_name), "INPUT_EMPTY");
@@ -82,13 +106,30 @@ class Validator
         return true;
     }
 
-    function v_numeric(mixed $value)
+    function v_numeric(mixed $value, array $args = [])
     {
         if (!is_numeric($value)) {
             return new ReportableError(static::ERROR_SCOPE, sprintf(__("Value for %s must be a number.", 'wrd'), $this->field_name), "INPUT_NON_NUMERIC");
         }
 
         return true;
+    }
+
+    function v_between(mixed $value, array $args = [])
+    {
+        if (count($args) != 2) {
+            return false;
+        }
+
+        $low = floatval($args[0]);
+        $hig = floatval($args[1]);
+        $val = floatval($value);
+
+        if ($low <= $val && $val <= $hig) {
+            return new ReportableError(static::ERROR_SCOPE, sprintf(__("Value for %s must be a number between %d and %d.", 'wrd'), $this->field_name, $low, $hig), "INPUT_NOT_IN_RANGE");
+        }
+
+        return false;
     }
 
 
