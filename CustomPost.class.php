@@ -702,7 +702,8 @@ class CustomPost
                     "slug" => "$slug/?$",
                     "rewrite" => "index.php?post_type=$post_type",
                     "query_vars" => $query_vars,
-                    "template_callback" => ["wrd\CustomEditor", "get_instance"]
+                    "template_callback" => ["wrd\CustomEditor", "get_instance"],
+                    "template_parameters" => [null]
                 ]);
 
                 $i++;
@@ -718,7 +719,7 @@ class CustomPost
                     "rewrite" => "index.php?post_type=$post_type",
                     "query_vars" => $query_vars,
                     "template_callback" => ["wrd\CustomCreator", "get_instance"],
-                    "template_parameters" => [$class, true]
+                    "template_parameters" => [$class]
                 ]);
 
                 $i++;

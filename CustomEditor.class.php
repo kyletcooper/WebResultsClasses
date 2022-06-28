@@ -8,7 +8,7 @@ class CustomEditor
 
     private static $instance = null;
 
-    function __construct(CustomPost $post = null)
+    function __construct($post = null)
     {
         $post = CustomPost::get_post_unknown($post);
 
@@ -16,16 +16,18 @@ class CustomEditor
         $this->wp_post = $post->post;
         $this->ID = $post->ID;
         $this->class = get_class($post);
+        $this->exit_link = $this->post->get_permalink();
+        $this->fields = $this->post->fields;
 
         add_action("template_include", '__return_null', PHP_INT_MAX);
 
         $this->render();
     }
 
-    public static function get_instance()
+    public static function get_instance($post)
     {
         if (static::$instance == null) {
-            static::$instance = new static();
+            static::$instance = new static($post);
         }
 
         return static::$instance;
@@ -38,21 +40,26 @@ class CustomEditor
      */
     function submit(array $postarr)
     {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            return; // Form hasn't been submitted.
-        }
-
-        if (!wp_verify_nonce($postarr['editor_nonce'], 'editor_post-' . $this->ID)) {
-            new ReportableError(static::error_scope, __("The form has expired. Please refresh and try again", "wrd"));
-            return;
-        }
-
         $update = $this->post->update_post($postarr);
 
         $this->post = $update;
         $this->wp_post = get_post($this->ID);
 
         return $update;
+    }
+
+    function canSubmit(array $postarr)
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return false; // Form hasn't been submitted.
+        }
+
+        if (!wp_verify_nonce($postarr['editor_nonce'], 'editor_post-' . $this->ID)) {
+            new ReportableError(static::error_scope, __("The form has expired. Please refresh and try again", "wrd"));
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -64,10 +71,12 @@ class CustomEditor
             WRD::redirect_403(__("You don't have permission to edit this post.", "wrd"));
         }
 
-        $this->submit($_POST);
+        if ($this->canSubmit($_POST)) {
+            $this->submit($_POST);
+        }
 
         // Open Page
-        WRD::set_title_tag(sprintf(__("Editing %s", "wrd"), $this->wp_post->post_title));
+        WRD::set_title_tag($this->get_title());
         WRD::add_meta_tag("robots", "noindex");
         get_header();
 
@@ -88,7 +97,7 @@ class CustomEditor
 
         get_footer();
 
-        return $this->post;
+        die();
     }
 
     /**
@@ -133,11 +142,11 @@ class CustomEditor
 
         <header class="editor_head">
             <h1 class="editor_title">
-                <?php printf(__("Editing %s", 'wrd'), $this->wp_post->post_title) ?>
+                <?php echo $this->get_title() ?>
             </h1>
 
             <div class="editor_controls">
-                <a class="editor_exit" href="<?php echo $this->post->get_permalink() ?>"><?php _e("Close", "wrd") ?></a>
+                <a class="editor_exit" href="<?php echo $this->exit_link ?>"><?php _e("Close", "wrd") ?></a>
                 <button class="editor_submit" type="submit"><?php _e("Save", "wrd") ?></button>
             </div>
         </header>
@@ -167,7 +176,12 @@ class CustomEditor
 
             <?php endforeach; ?>
         </section>
-    <?php
+<?php
+    }
+
+    function get_title()
+    {
+        return sprintf(__("Editing %s", "wrd"), $this->wp_post->post_title);
     }
 
     /**
@@ -179,100 +193,10 @@ class CustomEditor
     {
         $sections = [];
 
-        foreach ($this->post->fields as $field) {
+        foreach ($this->fields as $field) {
             $sections[$field->get_section()][] = $field;
         }
 
         return $sections;
-    }
-
-    function render_creator()
-    {
-    ?>
-        <style>
-            #wpbody {
-                position: relative;
-            }
-
-            .wrd-cover {
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                z-index: 10;
-
-                display: flex;
-                align-items: start;
-                justify-content: center;
-
-                padding-top: 10%;
-
-                background: #f0f0f1;
-            }
-
-            .wrd-cover-container {
-                display: flex;
-                gap: 1rem;
-                flex-direction: column;
-                align-items: start;
-                justify-content: center;
-
-                padding: 2rem;
-
-                min-width: 30%;
-
-                background: #fff;
-                border: 1px solid #CCD8DF;
-                border-radius: 8px;
-                box-shadow: 0 1rem 1rem rgb(193 232 255 / 20%);
-            }
-
-            input.wrd-input,
-            select.wrd-input {
-                border: 1px solid #CCD8DF;
-                border-radius: 4px;
-
-                padding: 0.75rem 1.5rem;
-                margin: 0;
-
-                width: 100%;
-                min-width: 400px;
-            }
-
-            .wrd-btn {
-                border: none;
-                border-radius: 4px;
-
-                padding: 1rem 2rem;
-                margin: 0;
-
-                background: #1E92F8;
-                color: white;
-                font-weight: 500;
-
-                cursor: pointer;
-            }
-
-            .wrd-btn:hover {
-                background: #0061B7;
-            }
-        </style>
-
-        <form class="wrd-cover" action="<?php echo admin_url('admin-post.php'); ?>" method="POST">
-            <div class="wrd-cover-container">
-
-                <?php
-
-                foreach ($this->post->get_required_fields() as $field) {
-                    $field->render();
-                }
-
-                ?>
-
-            </div>
-        </form>
-
-<?php
     }
 }

@@ -30,17 +30,22 @@ class Validator
 
     function seperate_rules(string $rules)
     {
+        if (strlen(trim($rules)) < 1) {
+            return [];
+        }
+
         $rules = explode("|", $rules);
         $rules_args = []; // ["rule" => ["arg1", "arg2"]]
 
         foreach ($rules as $rule) {
             if (!WRD::str_contains($rule, ":")) {
-                $rules_args[$rule] = "";
+                $rules_args[$rule] = [];
                 continue;
             }
 
-            $rule_parts = explode($rule, ":");
+            $rule_parts = explode(":", $rule);
             $rule = $rule_parts[0];
+
             $args = explode(",", $rule_parts[1]);
 
             $rules_args[$rule] = $args;
@@ -125,11 +130,11 @@ class Validator
         $hig = floatval($args[1]);
         $val = floatval($value);
 
-        if ($low <= $val && $val <= $hig) {
+        if ($low > $val || $val > $hig) {
             return new ReportableError(static::ERROR_SCOPE, sprintf(__("Value for %s must be a number between %d and %d.", 'wrd'), $this->field_name, $low, $hig), "INPUT_NOT_IN_RANGE");
         }
 
-        return false;
+        return true;
     }
 
 
