@@ -9,7 +9,7 @@ class Email
     function __construct($data)
     {
         $data = array_merge([
-            "to" => false,
+            "to" => get_bloginfo('admin_email'),
             "subject" => "New Message from " . get_bloginfo('name'),
             "headers" => [],
             "message" => [],
