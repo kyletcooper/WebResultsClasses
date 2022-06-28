@@ -17,7 +17,6 @@ class CustomCreator extends CustomEditor
         $this->parent = null;
         $this->exit_link = home_url();
         $this->ID = -1;
-        $this->permission = $this->class::perm_new;
 
         if ($this->parent_class) {
             $this->parent = $this->parent_class::get_post_by_slug(get_query_var("parent"));
@@ -45,7 +44,7 @@ class CustomCreator extends CustomEditor
             }
         }
 
-        if (!CustomUser::current_user_can($this->class::perm_new, $this->class)) {
+        if (!CustomUser::current_user_can($this->class::perm_create, $this->class)) {
             WRD::redirect_403(__("You don't have permission to edit this post.", "wrd"));
         }
 
