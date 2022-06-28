@@ -21,6 +21,10 @@ class CustomEditor
 
         add_action("template_include", '__return_null', PHP_INT_MAX);
 
+        if (!CustomUser::current_user_can($this->class::perm_edit, $this->ID)) {
+            WRD::redirect_403(__("You don't have permission to edit this post.", "wrd"));
+        }
+
         $this->render();
     }
 
@@ -67,10 +71,6 @@ class CustomEditor
      */
     function render()
     {
-        if (!CustomUser::current_user_can($this->class::perm_edit, $this->ID)) {
-            WRD::redirect_403(__("You don't have permission to edit this post.", "wrd"));
-        }
-
         if ($this->canSubmit($_POST)) {
             $this->submit($_POST);
         }

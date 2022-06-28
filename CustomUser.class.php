@@ -456,6 +456,8 @@ class CustomUser
 
         $allowed = $this->user->has_cap($capability, ...$args);
 
+        var_dump($args);
+
         $allowed = apply_filters("user_can_$capability", $allowed, $this, ...$args);
 
         return $allowed;

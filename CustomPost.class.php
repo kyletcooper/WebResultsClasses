@@ -542,7 +542,7 @@ class CustomPost
     {
         $class = get_called_class();
 
-        if (!CustomUser::current_user_can(static::perm_create)) {
+        if (!CustomUser::current_user_can(static::perm_create, $class)) {
             new ReportableError($class, __("You don't have permission to create posts.", "wrd"));
             return null;
         }
