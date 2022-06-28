@@ -23,6 +23,7 @@ class CustomField
 
     // Built-in
     public $opts;
+    public $error;
 
     function __construct($opts)
     {
@@ -200,6 +201,7 @@ class CustomField
         $validator = new Validator($this->label, $this->validation, $this->filtering);
 
         if (!$validator->validate($value)) {
+            $this->error = $validator->get_error();
             return false;
         }
 
@@ -378,13 +380,13 @@ class CustomField
      */
     function get_error()
     {
-        $errors = ReportableError::get_by_scope($this->get_slug());
+        $error = $this->error;
 
-        if (!$errors) {
+        if (!$error) {
             return "";
         }
 
-        return $errors[array_key_last($errors)]->get_message();
+        return $error->get_message();
     }
 
     /**
