@@ -45,7 +45,6 @@ class CustomPost
     const archive = false;
     const single = false;
 
-    const children_class = [];              // Array. CustomPost classes allowed to be children
     const parent_class = false;             // String. CustomPost Class allowed to be the parent.
 
     const editor = true;                    // Boolean. Set to false to disable the editor.
@@ -428,14 +427,13 @@ class CustomPost
      */
     function query_children(string $class, array $args = [])
     {
-        if (!in_array($class, static::children_class)) {
+        if (!class_exists($class) || $class::parent_class != get_called_class()) {
             return null;
         }
 
         $args["post_parent"] = $this->ID;
         $args["post_type"] = $class::post_type;
 
-        $class = get_called_class();
         $args = apply_filters("pre_get_custom_post_children", $args);
         $args = apply_filters("pre_get_custom_{$class}_post_children", $args);
 
