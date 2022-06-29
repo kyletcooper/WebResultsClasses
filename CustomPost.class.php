@@ -352,6 +352,31 @@ class CustomPost
     }
 
     /**
+     * Finds the term for this post with the lowest position in the hierarchy.
+     * 
+     * E.i. the term with the most ancestors
+     * 
+     * @param string $taxonomy The tax to find terms for.
+     */
+    function get_deepest_term(string $taxonomy)
+    {
+        $terms = $this->get_terms($taxonomy);
+        $depth = 0;
+        $deepest_term = null;
+
+        foreach ($terms as $term) {
+            $ancestors = get_ancestors($term->term_id);
+
+            if (count($ancestors) > $depth) {
+                $depth = count($ancestors);
+                $deepest_term = $term;
+            }
+        }
+
+        return $deepest_term;
+    }
+
+    /**
      * For heirarchical posts. Retrieves the parent post object (if it exists).
      * 
      * @return CustomPost|null $parent CustomPost instance of the parent post or null if not found.
