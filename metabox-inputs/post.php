@@ -7,12 +7,14 @@ $posts = get_posts([
 ?>
 
 <select id="<?php echo esc_attr($this->id) ?>" name="<?php echo esc_attr($this->key) ?>[]" <?php echo (@$this->data['multiple'] ? "multiple" : "") ?> style="width: calc(100% - 28px);">
+
     <?php foreach ($posts as $post_choice) :
 
         $selected = "";
 
         if (@$this->data['multiple']) {
-            $selected = in_array($post_choice->ID, $this->get_value($post_id)) ? "selected" : "";
+            $value = $this->get_value($post_id) ? $this->get_value($post_id) : [];
+            $selected = in_array($post_choice->ID, $value) ? "selected" : "";
         } else {
             $selected = $post_choice->ID == $this->get_value($post_id) ? "selected" : "";
         }
