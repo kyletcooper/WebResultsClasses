@@ -3,6 +3,12 @@ class FilteringSystem{
         this.form = document.querySelector(formSelector);
         this.output = document.querySelector(outputSelector);
 
+        // Load previous search if we need to
+        let params = new URLSearchParams(location.search);
+        if(params.get("loadSearch") == '1'){
+            this.load_search();
+        }
+
         window.FILTERS = window.FILTERS || {
             paged: 1,
         };
@@ -15,16 +21,49 @@ class FilteringSystem{
 
     _addEventListeners(){
         Array.from(this.form.elements).forEach(el => {
-            el.addEventListener("input", e => {
+            el.addEventListener("input", () => {
                 this.update();
             });
         });
+    }
+
+    save_search(){
+        let url = window.location.href;
+        document.cookie = "last_search=" + url + "; path=/";
+    }
+
+    load_search(){
+        let url = this.get_cookie("last_search");
+
+        if(url){
+            window.location.replace(url);
+        }
+    }
+
+    get_cookie(name){
+        name + "=";
+        let decodedCookie = decodeURIComponent(document.cookie);
+        let ca = decodedCookie.split(';');
+
+        for(let i = 0; i <ca.length; i++) {
+            let c = ca[i];
+
+            while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+            }
+
+            if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        return "";
     }
 
     update(){
         this.set_filter_group_markers();
         this.refresh_url_query();
         this.get_posts();
+        this.save_search();
 
         const event = new CustomEvent('filter', {
             args: this.args,
