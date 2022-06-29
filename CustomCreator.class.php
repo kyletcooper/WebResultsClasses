@@ -58,14 +58,14 @@ class CustomCreator extends CustomEditor
      */
     function submit(array $postarr)
     {
-        if (!CustomUser::current_user_can($this->class::perm_edit, $this->class)) {
-            WRD::redirect_403(__("You don't have permission to create this."));
-        }
-
         if ($this->parent) {
             $postarr["post_parent"] = $this->parent->ID;
         } else {
             $postarr["post_parent"] = 0;
+        }
+
+        if (!CustomUser::current_user_can($this->class::perm_create, $this->class, $postarr["post_parent"])) {
+            WRD::redirect_403(__("You don't have permission to create this."));
         }
 
         if (!$postarr["post_title"]) {
