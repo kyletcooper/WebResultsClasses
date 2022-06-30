@@ -619,6 +619,17 @@ class WRD
         return ["post"];
     }
 
+    /**
+     * Adds a class/classes to the body element.
+     */
+    static function add_body_class(string $class)
+    {
+        add_filter("body_class", function ($classes) use ($class) {
+            $classes[] = $class;
+            return $classes;
+        });
+    }
+
     static function enqueue()
     {
         wp_enqueue_script("WRD-js", WRD::dir_to_url() . '/query.js');

@@ -365,7 +365,7 @@ class CustomPost
         $deepest_term = null;
 
         foreach ($terms as $term) {
-            $ancestors = get_ancestors($term->term_id);
+            $ancestors = get_ancestors($term->term_id, $taxonomy, 'taxonomy');
 
             if (count($ancestors) > $depth) {
                 $depth = count($ancestors);
