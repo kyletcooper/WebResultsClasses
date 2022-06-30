@@ -8,6 +8,8 @@ class NavPanels extends NavBase
     static $script = NAV_URL . 'NavPanels.js';
     static $styles = NAV_URL . "NavPanels.css";
 
+    public $first = true;
+
     /**
      * Starts the list before the elements are added.
      *
@@ -53,6 +55,11 @@ class NavPanels extends NavBase
      */
     public function start_el(&$output, $data_object, $depth = 0, $args = null, $current_object_id = 0)
     {
+        if ($depth == 0 && $this->first && $args && property_exists($args, 'base_panel_header')) {
+            $this->first = false;
+            $output .= $args->base_panel_header;
+        }
+
         $output .= $this->create_el($data_object, $depth, $args, [], ["data-navpanel-open" => true]);
 
         if ($this->has_children) {

@@ -4,12 +4,22 @@ document.addEventListener('DOMContentLoaded', function () {
         let currHeight = menu.offsetHeight;
         menu.style.height = "unset";
         let open_pages = menu.querySelectorAll("[data-navpanel-page][aria-expanded='true']");
+
+        // Open anything thats hiding us above
+        let closed_ancestors = menu.closest("[aria-expanded='false']");
+        if(closed_ancestors){
+            closed_ancestors.setAttribute("aria-expanded", true);
+        }
+
         let height = menu.offsetHeight;
 
         open_pages.forEach(page => {
             height = Math.max(height, page.offsetHeight);
         });
-
+        
+        if(closed_ancestors){
+            closed_ancestors.setAttribute("aria-expanded", false);
+        }
         menu.style.height = height + "px";
     }
     document.querySelectorAll(".NavPanel").forEach(menu => NavPanel_setHeight(menu));
