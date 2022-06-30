@@ -630,6 +630,32 @@ class WRD
         });
     }
 
+    /**
+     * Gets an array containing all the template files as the key and their commented name as the value.
+     */
+    static function get_part_choices($directory)
+    {
+        $choices = [];
+        $parts = scandir($directory);
+
+        foreach ($parts as $part) {
+            if (is_dir($part)) {
+                continue;
+            }
+
+            $data = get_file_data($directory . DIRECTORY_SEPARATOR . $part, [
+                "Part Name" => "Part Name"
+            ]);
+
+            $choices[$part] = $data["Part Name"];
+        }
+
+        $choices = apply_filters("direct_{$directory}_part_choices", $choices, $directory);
+
+        return $choices;
+    }
+
+
     static function enqueue()
     {
         wp_enqueue_script("WRD-js", WRD::dir_to_url() . '/query.js');
