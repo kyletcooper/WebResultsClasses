@@ -122,12 +122,15 @@ class WRD
      * 
      * @return void
      */
-    static function hidden_input(string $name, $value)
+    static function hidden_input(string $name, $value, array $attrs = [])
     {
-        $name = esc_attr($name);
-        $value = esc_attr($value);
+        $attrs["type"] = "hidden";
+        $attrs["name"] = esc_attr($name);
+        $attrs["value"] = esc_attr($value);
 
-        echo "<input type='hidden' name='$name' value='$value' />";
+        $attrs = static::array_to_attrs($attrs);
+
+        echo "<input $attrs />";
     }
 
     /**
@@ -467,7 +470,7 @@ class WRD
     {
         if (!$address) return null;
 
-        $address = explode(",<br/>", $address);
+        $address = explode(",", $address);
 
         $short = $address[0];
 

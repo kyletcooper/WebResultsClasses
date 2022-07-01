@@ -269,6 +269,10 @@ class CustomField
             return false;
         }
 
+        if ($this->type == "action") {
+            return $this->render_button($post_id);
+        }
+
         $default_inputs = [
             "button",
             "checkbox",
@@ -358,8 +362,38 @@ class CustomField
 
             <span class="field_input_wrapper">
                 <?php $this->render_attachment_preview($this->get_value($post_id)); ?>
+
                 <?php static::render_input($tag, $attrs, $self_closing, $content) ?>
             </span>
+
+            <?php if ($this->get_error()) : ?>
+
+                <output class="field_error" role="alert">
+                    <?php echo esc_html($this->get_error()); ?>
+                </output>
+
+            <?php endif; ?>
+        </label>
+
+    <?php
+    }
+
+    function render_button(int $post_id)
+    {
+    ?>
+        <!-- Field -->
+        <label <?php $this->field_classes() ?>>
+            <button type="submit" formmethod="post" name="action" value="<?php echo esc_attr($this->slug) ?>" formaction="<?php echo esc_attr(admin_url('admin-post.php')) ?>" class="field_btn">
+                <span class="field_btn_icon">
+                    <?php echo esc_html($this->icon) ?>
+                </span>
+
+                <span class="field_btn_label">
+                    <?php echo esc_html($this->label) ?>
+                </span>
+            </button>
+
+            <?php WRD::hidden_input("post_id", $post_id) ?>
 
             <?php if ($this->get_error()) : ?>
 
@@ -495,6 +529,17 @@ class CustomField
      */
     static function render_input(string $tag = "input", array $attrs = [], bool $self_closing = true, $content = "")
     {
+        if ($attrs["type"] == "checkbox") {
+            // Unchecked checkboxes don't submit a value, so we'll never know it was turned off!
+            // Creates a hidden input that mirrors the checkbox value and removed the name from the checkbox.
+            $hidden_id = uniqid("hidden_checkbox_input_");
+            $value = (int) array_key_exists("checked", $attrs);
+
+            WRD::hidden_input($attrs['name'], $value, ["id" => "$hidden_id"]);
+            $attrs['name'] = "";
+            $attrs['onChange'] = "document.getElementById('$hidden_id').value=this.checked?1:0;";
+        }
+
         $tag = esc_html($tag);
         $attrs = WRD::array_to_attrs($attrs);
 

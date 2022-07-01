@@ -465,6 +465,12 @@ class CustomPost
         return new \WP_Query($args);
     }
 
+    static function get_new_permalink()
+    {
+        $link = trailingslashit(home_url(static::slug)) . static::slug_edit_suffix;
+        return $link;
+    }
+
     function get_archive_permalink()
     {
         throw new NotImplementedException();
@@ -807,35 +813,34 @@ class CustomPost
 
         $posttype = static::post_type;
 
-        add_action('all_admin_notices', function () {
+        add_action('edit_form_after_title', function () {
             $screen = get_current_screen();
 
             if ($screen->post_type == static::post_type && $screen->action == "add") {
-                new CustomCreator(get_called_class());
+?>
+
+                <a class="button button-primary button-large button-openeditor" href="<?php echo esc_attr(static::get_new_permalink()) ?>">
+                    <?php _e("Create in Editor", 'wrd') ?>
+                </a>
+
+            <?php
             }
         });
 
-        add_action("admin_post_create_$posttype", function () {
-            $title = $_POST['post_title'];
-            $parent = null;
 
-            if (array_key_exists("post_parent", $_POST)) {
-                $parent = $_POST['post_parent'];
+        add_action('edit_form_after_title', function () {
+            $screen = get_current_screen();
+
+            if ($screen->post_type == static::post_type && $screen->base == "post" && $screen->action != "add") {
+                $post = static::get_post();
+            ?>
+
+                <a class="button button-primary button-large button-openeditor" href="<?php echo esc_attr($post->get_edit_permalink()) ?>">
+                    <?php _e("Open in Editor", 'wrd') ?>
+                </a>
+
+<?php
             }
-
-            $post = static::create_post($title, $parent);
-            $url = "";
-
-            if (!$post) {
-                $url = add_query_arg([
-                    "post_type" => static::post_type,
-                ], admin_url('post-new.php'));
-            } else {
-                $url = $post->get_edit_permalink();
-            }
-
-            wp_redirect($url);
-            exit();
         });
     }
 
