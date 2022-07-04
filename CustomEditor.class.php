@@ -194,7 +194,9 @@ class CustomEditor
         $sections = [];
 
         foreach ($this->fields as $field) {
-            $sections[$field->get_section()][] = $field;
+            if ($field->user_has_permission($this->ID)) {
+                $sections[$field->get_section()][] = $field;
+            }
         }
 
         return $sections;
