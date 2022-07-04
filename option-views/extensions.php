@@ -40,7 +40,7 @@ wp_enqueue_script('wrd-admin-settings-script', OPTIONSPAGE_URL . 'script.js', ar
 
                     <div class="wrd-row wrd-row-gap">
 
-                        <?php if ($extension->get_status() == ThemeExtension::ACTIVE) : ?>
+                        <?php if ($extension->get_status() == ThemeExtension::ACTIVE && $extension->settings_page) : ?>
                             <a href="<?php echo esc_attr($extension->settings_page) ?>"><?php _e("Extension Settings", 'direct'); ?></a>
                         <?php endif; ?>
 
