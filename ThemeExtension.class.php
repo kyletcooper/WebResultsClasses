@@ -30,14 +30,14 @@ class ThemeExtension
 
         $this->version = WRD::array_fallback($data, "version", "1.0.0");
 
-        $this->title            = WRD::array_fallback($data, "title", "");
-        $this->description      = WRD::array_fallback($data, "description", "1.0.0");
-        $this->author_name      = WRD::array_fallback($data, "author_name", "1.0.0");
-        $this->author_uri       = WRD::array_fallback($data, "author_uri", "1.0.0");
-        $this->settings_page    = WRD::array_fallback($data, "settings_page", "1.0.0");
+        $this->title            = WRD::array_fallback($data, "title", "Direct Theme Extension");
+        $this->description      = WRD::array_fallback($data, "description", "Lorem ipsum dulcet et delores et.");
+        $this->author_name      = WRD::array_fallback($data, "author_name", "Author");
+        $this->author_uri       = WRD::array_fallback($data, "author_uri", "");
+        $this->settings_page    = WRD::array_fallback($data, "settings_page", "");
 
         global $THEMEEXTENSIONS;
-        $THEMEEXTENSIONS[] = &$this;
+        $THEMEEXTENSIONS[$this->slug] = &$this;
     }
 
     static function get_all()
