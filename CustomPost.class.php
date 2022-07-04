@@ -526,7 +526,7 @@ class CustomPost
 
     static function render_post_preview(string $style = '', $small = false, $post_preview = null)
     {
-        $posttype = static::post_type;
+        $posttype = get_post_type($post_preview);
 
         global $post;
         $post = get_post($post_preview);
