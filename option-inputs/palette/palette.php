@@ -83,8 +83,8 @@ class Option_Palette extends Option
 
     function enqueue($hook)
     {
-        wp_enqueue_style('palette-style', OPTIONS_URL . '/admin/inputs/palette/style.css', array(), '1.0');
-        wp_enqueue_script('palette-script', OPTIONS_URL . '/admin/inputs/palette/script.js', array('jquery'), '1.0');
+        wp_enqueue_style('palette-style', OPTIONS_URL . '/palette/style.css', array(), '1.0');
+        wp_enqueue_script('palette-script', OPTIONS_URL . '/palette/script.js', array('jquery'), '1.0');
     }
 
     function register_setting()
