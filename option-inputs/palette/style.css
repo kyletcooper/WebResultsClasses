@@ -1,0 +1,78 @@
+.wrd-setting-palette {
+	--h-color: black;
+	--p-color: #252525;
+	--bg-color: rgb(255 255 255);
+	--img-color: rgb(209, 209, 209);
+	--btn-color: rgb(94, 21, 190);
+	--btn-text: rgb(255, 255, 255);
+}
+.wrd-setting-palette__example {
+	background: var(--bg-color);
+
+	margin-top: 2rem;
+	padding: 2rem;
+	border-radius: 0.3rem;
+}
+.wrd-setting-palette__example h2 {
+	margin: 0;
+	margin-bottom: 1.5rem;
+	color: var(--h-color);
+}
+.wrd-setting-palette__example p {
+	line-height: 2;
+	font-weight: 400;
+	color: var(--p-color);
+	margin: 0;
+}
+.wrd-setting-palette__example a {
+	color: var(--btn-color);
+}
+.wrd-setting-palette__example .btn {
+	display: block;
+
+	margin-top: 1.5rem;
+	padding: 1rem;
+
+	background-color: var(--btn-color);
+	color: var(--btn-text);
+	font-weight: 500;
+	border-radius: 0.2rem;
+
+	width: fit-content;
+}
+
+.wrd-setting-palette__pickers {
+	display: flex;
+	gap: 1rem;
+	margin-top: 0.5rem;
+}
+.wrd-setting-palette__picker {
+	position: relative;
+}
+.wrd-setting-palette__input {
+	position: absolute;
+	top: 100%;
+	width: 0;
+	height: 0;
+	opacity: 0;
+}
+.wrd-setting-palette__label {
+	display: block;
+	width: 2rem;
+	height: 2rem;
+
+	border: 1px solid var(--wrd-clr-gray-300);
+	border-radius: 10rem;
+	padding: 0.2rem;
+
+	transition: border-color 0.2s ease;
+}
+.wrd-setting-palette__label:hover,
+.wrd-setting-palette__label:focus-within {
+	border-color: var(--wrd-clr-primary-500);
+}
+.wrd-setting-palette__label__color {
+	width: 100%;
+	height: 100%;
+	border-radius: inherit;
+}
