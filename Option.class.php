@@ -289,3 +289,4 @@ include_once OPTIONS_DIR . '/input/input.php';
 include_once OPTIONS_DIR . '/media/media.php';
 include_once OPTIONS_DIR . '/select/select.php';
 include_once OPTIONS_DIR . '/textarea/textarea.php';
+include_once OPTIONS_DIR . '/palette/palette.php';
